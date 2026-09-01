@@ -1,0 +1,56 @@
+schema_version: 1
+generated_at_utc: "2026-09-01T12:45:48Z"
+purpose: "Reproducibility metadata for the initial legacy research snapshot."
+
+repository_policy:
+  role: "MT-PATCHER/OPD experiment control repository"
+  visibility: "private research repository"
+  vendor_tracked_in_main_repository: false
+  runtime_artifacts_tracked_in_main_repository: false
+
+repositories:
+  mt_patcher_official:
+    local_path: "vendor/MT-Patcher-official"
+    remote_name: "origin"
+    upstream_url: "https://github.com/NJUNLP/MT-Patcher.git"
+    commit: "047f1b75401d616ca6a0f864eeebdb75dfd4ac9b"
+    branch: "main"
+    worktree_status: "clean"
+    tracked_in_main_repository: false
+
+  peg_rl:
+    local_path: "../peg-rl"
+    remote_name: "origin"
+    upstream_url: "https://github.com/NJUNLP/peg-rl.git"
+    commit: "5787772a7fb4fce4a6376d7c574ad177e5722ac4"
+    branch: "main"
+    worktree_status: "clean"
+    tracked_in_main_repository: false
+
+  comet_pegrl:
+    local_path: "../COMET-pegrl"
+    remote_name: "origin"
+    upstream_url: "https://github.com/dgme-syz/COMET.git"
+    commit: "92d3df371ea4de3ff424c0f8379abb86967673bc"
+    branch: "feature/support-custom-strategy"
+    worktree_status: "clean"
+    tracked_in_main_repository: false
+
+local_vendor_snapshots:
+  trl:
+    local_path: "vendor/trl-v1.0.0"
+    declared_version: "unknown"
+    upstream_url: "https://github.com/huggingface/trl"
+    commit: "unknown"
+    branch: "unknown"
+    worktree_status: "not_a_git_repository"
+    tracked_in_main_repository: false
+
+  peft:
+    local_path: "vendor/peft0200"
+    declared_version: "0.20.0"
+    upstream_url: "https://github.com/huggingface/peft"
+    commit: "unknown"
+    branch: "unknown"
+    worktree_status: "not_a_git_repository"
+    tracked_in_main_repository: false
