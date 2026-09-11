@@ -110,3 +110,8 @@ Thumbs.db
 # Third-party source and environment snapshots are not part of the
 # initial legacy snapshot. Their provenance is recorded separately.
 /vendor/
+# Local Python/runtime artifacts
+# Local emergency/edit backups
+*.pre_*
+# Large/generated experiment artifacts
+results/
