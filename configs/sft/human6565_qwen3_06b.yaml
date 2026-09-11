@@ -1,0 +1,57 @@
+name: human6565_qwen3_06b
+nproc_per_node: 16
+
+overrides:
+  - data.train_files=/workspace/mtpatcher/data/verl_sft_qwen3_06b/human6565.parquet
+  - data.val_files=null
+
+  - data.train_batch_size=16
+  - data.micro_batch_size_per_gpu=1
+  - data.use_dynamic_bsz=false
+
+  - data.messages_key=messages
+  - data.enable_thinking_default=false
+  - data.pad_mode=no_padding
+  - data.max_length=1024
+  - data.truncation=error
+  - data.num_workers=0
+  - data.ignore_input_ids_mismatch=false
+
+  - +data.apply_chat_template_kwargs.enable_thinking=false
+
+  - data.custom_cls.path=/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/data/verl_mt_response_sft_dataset.py
+  - data.custom_cls.name=MTResponseOnlySFTDataset
+
+  - model.path=/workspace/mtpatcher/models/Qwen3-0.6B
+  - model.lora_rank=0
+  - model.use_remove_padding=true
+  - model.enable_gradient_checkpointing=true
+
+  - engine=fsdp
+  - engine.ulysses_sequence_parallel_size=1
+  - engine.model_dtype=fp32
+  - engine.dtype=bfloat16
+  - engine.seed=20260820
+
+  - optim.optimizer=AdamW
+  - optim.optimizer_impl=torch.optim
+  - optim.lr=2e-5
+  - optim.weight_decay=0.01
+  - optim.clip_grad=1.0
+  - optim.lr_scheduler_type=constant
+  - optim.lr_warmup_steps_ratio=0.03
+
+  - trainer.project_name=mtpatcher-sft
+  - trainer.experiment_name=human6565-qwen3-06b
+  - trainer.seed=20260820
+
+  - trainer.nnodes=1
+  - trainer.n_gpus_per_node=16
+
+  - trainer.total_epochs=3
+  - trainer.total_training_steps=null
+
+  - trainer.logger=["console","tensorboard"]
+  - trainer.save_freq=after_each_epoch
+  - trainer.test_freq=-1
+  - trainer.resume_mode=disable

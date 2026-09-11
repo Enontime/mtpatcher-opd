@@ -1,0 +1,98 @@
+artifact_id: canonical_seqkd_vs_opd_launch_20260903_v1
+artifact_type: immutable_experiment_launch_snapshot
+formed_at_utc: '2026-09-03T07:00:02.618258+00:00'
+snapshot_state: experiment_in_progress
+scientific_question: Given the same frozen Student initialization, Broad20k source
+  population, and Teacher, compare canonical offline sequence distillation with canonical
+  native-Verl on-policy Teacher-top-k distribution distillation.
+claim_scope:
+  comparison_type: method-level canonical recipe comparison
+  single_factor_causal_isolation: false
+  source_exposure_matched: true
+  optimizer_update_matched: true
+  compute_matched: false
+git:
+  project_head_at_snapshot: 2b3de262661fc6a2218ea03d126b6240df04c80e
+  branch: infra/verl-ascend-parity
+  science_source_git_state: canonical framework-native science files untracked at
+    launch
+  provenance_note: Exact launch bytes are protected by cryptographic hashes.
+protected_assets:
+  manifest_path: /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/manifests/releases/protected_live_assets_20260903_v1.sha256
+  manifest_sha256: d8c850fbf436b94a606d0d7404eeab2b3feb80b03b08d33a79e4b72c8a4f8f6a
+population:
+  name: Broad20k
+  source_count: 20000
+  source_passes: 3
+  source_exposures: 60000
+  global_batch: 16
+  updates_per_pass: 1250
+  total_updates: 3750
+  seqkd_asset: /workspace/mtpatcher/data/verl_science_broad20k/seqkd_broad20k.parquet
+  opd_asset: /workspace/mtpatcher/data/verl_science_broad20k/opd_broad20k.parquet
+models:
+  student: Qwen3-0.6B
+  teacher: Qwen3-8B
+opd_runtime_resolved:
+  objective:
+    loss_mode: forward_kl_topk
+    teacher_topk: 32
+    use_task_rewards: false
+    use_policy_gradient: false
+    actor_use_kl_loss: false
+    use_kl_in_reward: false
+  rollout:
+    n: 1
+    temperature: 1.0
+    top_p: 1.0
+    top_k: -1
+  optimization:
+    lr: 1.0e-06
+    weight_decay: 0.01
+    lr_scheduler_type: constant
+    lr_warmup_steps: -1
+    lr_warmup_steps_ratio: 0.0
+  runtime_resolved_seeds:
+    trainer_seed: UNSET
+    data_loader_seed: 42
+    fsdp_seed: 42
+    rollout_seed: 42
+    note: These values were recovered from the runtime-resolved config and were not
+      retrospectively treated as preregistered.
+resources:
+  actor_logical_npus: 8
+  teacher_logical_npus: 4
+  idle_logical_npus: 4
+  rollout_tp: 2
+  teacher_tp: 2
+endpoints:
+  pass1_step: 1250
+  pass2_step: 2500
+  primary_pass3_step: 3750
+  selection_policy: pass1 and pass2 are diagnostic; pass3 is the primary endpoint.
+runs_at_snapshot:
+  pair_run: /workspace/mtpatcher/runs/science/canonical_seqkd_vs_opd_20260903_033654
+  seqkd_attempt1:
+    run_dir: /workspace/mtpatcher/runs/sft/canonical_seqkd_broad20k_qwen3_06b_8b_20260903_033659
+    scientific_status: '1'
+    classification: infrastructure-aborted-by-SIGHUP
+    use_in_scientific_comparison: false
+  opd:
+    run_dir: /workspace/mtpatcher/runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058
+    state: running
+    final_status: MISSING
+  seqkd_retry_watcher:
+    run_dir: /workspace/mtpatcher/runs/science/seqkd_retry_after_opd_20260903_043656
+    status_snapshot: 'watcher_start=2026-09-03T04:36:56+00:00
+
+      opd_run=/workspace/mtpatcher/runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058
+
+      still_waiting_opd minutes=30 time=2026-09-03T05:06:56+00:00
+
+      still_waiting_opd minutes=60 time=2026-09-03T05:36:56+00:00
+
+      still_waiting_opd minutes=90 time=2026-09-03T06:06:56+00:00
+
+      still_waiting_opd minutes=120 time=2026-09-03T06:36:56+00:00'
+immutability_note: This launch snapshot is immutable. Experiment completion creates
+  a new dated final manifest rather than editing this launch artifact.

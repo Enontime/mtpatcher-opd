@@ -1,0 +1,22 @@
+# protected_live_assets_20260903_v1
+#
+# Section 1: scientific assets verified against
+# canonical pair launch provenance.
+#
+066140eb59ac32f386164df2e3b8566e3b06dc3ffe2ed20e42c8de51b93784e7  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/configs/sft/canonical_seqkd_broad20k_qwen3_06b_8b.yaml
+3e4d9ea3d150a9c5699c92ddc1f156717da66a6fc925e074eb9eb0e0b29e99f0  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/recipes/sft/canonical_seqkd_broad20k_qwen3_06b_8b.sh
+654452eef623158d105d40b9f706196e8c899ada6b9347a34ebd5e0d71f71bae  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/configs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b.yaml
+e6287d696c70622e6011af536ba9fcc6936f8d2327e1b01b9cda2a4b446964f6  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/recipes/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b.sh
+efb2eb7cc10d5a0a9b3f8b41583aff6ba8f57426a045b8e790ddb1f9412c3fe1  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/recipes/opd/smoke_fkl_topk_qwen3_06b_8b.sh
+f90b40e9e974a6f9bfc55f443ce140855ed897d1ca0f523b7a79e087a75c7875  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/data/verl_mt_response_sft_dataset.py
+73abdf69bddcc8c76ba2c0bd1c79f2e2945c3d52fad052503616691968e612e2  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/opd/constant_zero_reward.py
+0c953822511b857c0238b998c6b9bccac15a3c734ff3e1ccb86082b01b4a0611  /workspace/mtpatcher/data/verl_science_broad20k/seqkd_broad20k.parquet
+4632c758a2fbc6f938625b8f49b50e138a233710f45e36f2ced6f16d90a7b28d  /workspace/mtpatcher/data/verl_science_broad20k/opd_broad20k.parquet
+
+# Section 2: operational live assets frozen
+# during the running experiment.
+# These are NOT claimed to have been part of
+# the original scientific preregistration.
+#
+49f7d8ffc6c1ecf5230beb358f90438b4b9ee91f96a63cc1683541285a19c5dd  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/infra/run_canonical_seqkd_then_opd_v1.sh
+9ca19a377688c9d1870732e4b1621ffe17eba9bef33c2927c45914d325ff8c05  /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/infra/retry_seqkd_after_canonical_opd_v1.sh

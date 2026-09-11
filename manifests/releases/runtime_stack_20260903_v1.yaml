@@ -1,0 +1,56 @@
+artifact_id: runtime_stack_20260903_v1
+artifact_type: immutable_runtime_snapshot
+formed_at_utc: '2026-09-03T07:00:02.618258+00:00'
+versioning:
+  date_basis: UTC
+  immutable: true
+  source_history: Git
+  artifact_scheme: <semantic-name>_YYYYMMDD_vN
+project:
+  path: /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend
+  exists: true
+  commit: 2b3de262661fc6a2218ea03d126b6240df04c80e
+  branch: infra/verl-ascend-parity
+  worktree_clean: false
+frameworks:
+  verl:
+    path: /workspace/mtpatcher/repo/verl-v0.9.0
+    exists: true
+    commit: 483b8a009ba3a97563edee3a19887e4862b8094a
+    branch: ''
+    worktree_clean: true
+  vllm:
+    path: /workspace/mtpatcher/repo/vllm-v0.23.0
+    exists: true
+    commit: 0fc695fc6d1d82e9a5ac6835ac8e4e1c83703665
+    branch: ''
+    worktree_clean: true
+  vllm_ascend:
+    path: /workspace/mtpatcher/repo/vllm-ascend-v0.23.0
+    exists: true
+    commit: 93e5d5e339fd4385fd0cb5abb434ad8bf5626ae6
+    branch: releases/v0.23.0
+    worktree_clean: true
+environment:
+  path: /workspace/mtpatcher/envs/verl-v0.9.0-a3
+  python: 3.11.6 (main, Aug  3 2026, 19:20:17) [GCC 12.3.1 (openEuler 12.3.1-110.oe2403sp3)]
+  platform: Linux-5.10.0-216.0.0.115.oe2203sp4.aarch64-aarch64-with-glibc2.38
+  packages:
+    torch: 2.10.0
+    torch_npu: 2.10.0.post4
+    transformers: 5.5.4
+    ray: 2.58.0
+    vllm: 0.23.0+empty
+    vllm_ascend: 0.1.dev1+g93e5d5e33
+    pyyaml: 6.0.3
+    omegaconf: 2.3.1
+hardware:
+  logical_npu_count: 16
+  device_family: Ascend910_9362
+models:
+  student:
+    name: Qwen3-0.6B
+    path: /workspace/mtpatcher/models/Qwen3-0.6B
+  teacher:
+    name: Qwen3-8B
+    path: /workspace/mtpatcher/models/Qwen3-8B

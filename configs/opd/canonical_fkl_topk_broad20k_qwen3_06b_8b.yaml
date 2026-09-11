@@ -1,0 +1,103 @@
+name: canonical_fkl_topk_broad20k_qwen3_06b_8b
+
+student:
+  model: /workspace/mtpatcher/models/Qwen3-0.6B
+  init: frozen_base
+
+teacher:
+  model: /workspace/mtpatcher/models/Qwen3-8B
+  topk: 32
+
+population:
+  name: frozen_broad20k
+  train_file: /workspace/mtpatcher/data/verl_science_broad20k/opd_broad20k.parquet
+  rows: 20000
+  sha256: 4632c758a2fbc6f938625b8f49b50e138a233710f45e36f2ced6f16d90a7b28d
+
+budget:
+  source_passes: 3
+  source_exposures: 60000
+  global_train_batch: 16
+  updates_per_pass: 1250
+  total_updates: 3750
+  primary_endpoint: pass3
+  diagnostic_endpoints:
+    - pass1
+    - pass2
+  compute_matched_claim: false
+
+rollout:
+  max_prompt_length: 1024
+  max_response_length: 256
+  n: 1
+
+  # Canonical native-Verl sampling semantics.
+  #
+  # Deliberately NOT legacy custom 0.7 / 0.8 / 20:
+  # Verl propagates rollout temperature into actor scoring,
+  # so changing temperature would also change FKL semantics.
+  temperature: 1.0
+  top_p: 1.0
+  top_k: -1
+
+objective:
+  loss_mode: forward_kl_topk
+  use_task_rewards: false
+  use_policy_gradient: false
+  actor_use_kl_loss: false
+  use_kl_in_reward: false
+  loss_agg_mode: token-mean
+
+  # Exact YAML no-clamp semantics used by validated smoke.
+  loss_max_clamp: null
+  log_prob_min_clamp: null
+
+optimization:
+  actor_lr: 1.0e-6
+  ppo_epochs: 1
+
+execution:
+  actor_gpus: 8
+  teacher_gpus: 4
+
+  rollout_tp: 2
+  teacher_tp: 2
+  teacher_dp: 1
+
+  dtype: bfloat16
+
+  actor_use_remove_padding: true
+  actor_gradient_checkpointing: false
+  actor_torch_compile: false
+
+  actor_dynamic_bsz: true
+  actor_max_token_len_per_gpu: 4096
+
+  rollout_log_prob_dynamic_bsz: true
+  rollout_log_prob_micro_batch_size_per_gpu: 2
+  rollout_log_prob_max_token_len_per_gpu: 4096
+
+  rollout_gpu_memory_utilization: 0.35
+  teacher_gpu_memory_utilization: 0.40
+
+  rollout_enforce_eager: true
+  teacher_enforce_eager: true
+
+trainer:
+  logger:
+    - console
+    - tensorboard
+
+  project_name: mtpatcher-opd
+  experiment_name: canonical-fkl-topk-broad20k-qwen3-06b-8b
+
+  val_before_train: false
+  test_freq: -1
+
+  save_freq: 1250
+  resume_mode: disable
+
+provenance:
+  validated_smoke_recipe: /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/recipes/opd/smoke_fkl_topk_qwen3_06b_8b.sh
+  validated_smoke_sha256: efb2eb7cc10d5a0a9b3f8b41583aff6ba8f57426a045b8e790ddb1f9412c3fe1
+  zero_reward_adapter: /workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/opd/constant_zero_reward.py
