@@ -1,12 +1,13 @@
-# Legacy / Historical Implementation Policy
+# 历史实现管理规则
 
-Historical implementation is currently retained in place.
+历史实现目前继续保留在原路径。
 
-This directory is a logical boundary, not yet a physical archive.
+`legacy/` 当前主要是一个逻辑边界，
+并不意味着所有历史文件已经物理移动到本目录。
 
-## Historical areas currently retained in place
+## 当前仍保留在原位置的历史区域
 
-Examples include:
+例如：
 
 - `scripts/pilot_v2/`
 - `scripts/mtpatcher_v3/`
@@ -22,20 +23,20 @@ Examples include:
 - `scripts/mtpatcher_paper_repro/`
 - `scripts/mtpatcher_paper_faithful_v2/`
 - `scripts/mtpatcher_rq0/`
-- older standalone OPD / recovery / mechanism probes under `scripts/`
+- `scripts/` 根目录中的旧 OPD / recovery / mechanism probes。
 
-These paths may remain useful for:
+这些历史路径仍然可能用于：
 
-- historical result reconstruction;
-- provenance audits;
-- comparison against earlier custom implementations;
-- mechanism diagnostics already referenced by research notes.
+- 重建历史结果；
+- 来源追溯审计；
+- 与早期 custom implementation 做比较；
+- 复查已经被科研记录引用过的机制实验。
 
-## Rule for new formal experiments
+## 新正式实验规则
 
-Do not add new canonical training infrastructure under historical paths.
+不要继续在历史版本目录中增加新的 canonical training infrastructure。
 
-New framework-native work should use the current structured areas:
+新的 框架原生 工作优先使用：
 
     configs/
     recipes/
@@ -44,20 +45,29 @@ New framework-native work should use the current structured areas:
     scripts/eval/
     scripts/analysis/
     scripts/infra/
+    scripts/定向/
     tests/
     manifests/
 
-Only create a subdirectory when real code or artifacts require it.
+只有在确实有新的代码或资产需要时，才创建新的子目录。
 
-## Physical migration
+不要继续创建：
 
-Do not move historical files merely for cosmetic cleanup.
+    mtpatcher_v15/
+    mtpatcher_v16/
+    ...
 
-Physical migration should happen only after:
+这种纯时间版本目录作为新的主开发结构。
 
-1. active experiments are complete;
-2. path dependencies have been audited;
-3. historical manifests no longer depend on the old location;
-4. the migration itself is captured by Git.
+## 物理迁移规则
 
-Until then, historical code remains frozen in place.
+不要仅为了目录看起来整齐就移动历史文件。
+
+只有满足以下条件时才考虑物理迁移：
+
+1. 相关 active experiment 已经结束；
+2. 路径依赖已经审计；
+3. 历史 manifest 不再依赖旧路径；
+4. 迁移本身由 Git 完整记录。
+
+在此之前，历史代码保持原路径冻结。
