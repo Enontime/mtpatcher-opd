@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "experiment_id": "targeted_offline_prefix_support_replay_v1",
+  "title": "Offline Prefix-Support Replay",
+  "scientific_class": "DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY",
+  "status": "SPEC_FROZEN_NOT_STARTED",
+  "frozen_at_utc": "2026-09-12T18:04:40.806933+00:00",
+  "baseline_git_head": "8441ee484f52c38502ce11e1f94df66d24686ca6",
+  "direction": "zh->en",
+  "student_model": "/workspace/mtpatcher/models/Qwen3-0.6B",
+  "teacher_model": "/workspace/mtpatcher/models/Qwen3-8B",
+  "question": "Holding the soft-KL objective and training budget fixed, does replaying a frozen Teacher-supported trajectory rather than a frozen Student-supported trajectory materially improve targeted knowledge transfer?",
+  "competing_explanations": [
+    "Student-prefix / trajectory-state support limits transfer.",
+    "Soft-KL objective / update efficiency is the main bottleneck.",
+    "Teacher target distributions become intrinsically stronger on Teacher prefixes."
+  ],
+  "falsifiable_predictions": {
+    "support_hypothesis": "T materially exceeds S while Teacher hint signal is comparable between frozen S-prefix and T-prefix banks.",
+    "teacher_target_quality_confound": "T exceeds S but Teacher hint signal is itself materially stronger on T prefixes.",
+    "objective_efficiency": "T approximately equals S while Teacher hint signal is strong in both.",
+    "teacher_supervision_construction": "T approximately equals S and Teacher hint signal is weak in both."
+  },
+  "decision_after_result": {
+    "T_gt_S_signal_comparable": "prioritize local correction bridge",
+    "T_gt_S_signal_T_stronger": "run controlled teacher-signal probe; do not claim pure prefix causality",
+    "T_approx_S_signal_strong": "investigate weighted/sparse/contrastive KL",
+    "T_approx_S_signal_weak": "repair teacher supervision construction",
+    "chem_idiom_disagree": "independent-seed confirmation plus instance taxonomy"
+  },
+  "domains": [
+    "chemistry",
+    "idiom"
+  ],
+  "execution_order": [
+    "teacher_signal_audit_no_parameter_update",
+    "engineering_smoke_64_rows",
+    "chemistry_S_T_seed1",
+    "idiom_S_T_seed1",
+    "paired_bootstrap_screening",
+    "independent_training_seed_confirmation_if_screening_passes"
+  ],
+  "arms": {
+    "S": {
+      "prefix_source": "C0 Student frozen prefix bank",
+      "teacher_conditioning": "source + lexical hint + exact frozen Student prefix",
+      "student_conditioning": "source + exact frozen Student prefix"
+    },
+    "T": {
+      "prefix_source": "frozen Teacher lexical-hint prefix bank",
+      "teacher_conditioning": "source + lexical hint + exact frozen Teacher prefix",
+      "student_conditioning": "source + exact frozen Teacher prefix"
+    }
+  },
+  "matched_token_budget": "m_i=min(len(Y_S_i), len(Y_T_i))",
+  "semantic_alignment_claim": false,
+  "primary_population": "all frozen rows",
+  "secondary_analysis": {
+    "name": "event-covered shared-window analysis",
+    "preregistered": true,
+    "may_filter_training_rows": false
+  },
+  "teacher_signal_audit": {
+    "required_before_parameter_update": true,
+    "chemistry": [
+      "delta_T_S = log q_T(y*|x,k,Y_S_<t) - log q_T(y*|x,Y_S_<t)",
+      "delta_T_T = log q_T(y*|x,k,Y_T_<t) - log q_T(y*|x,Y_T_<t)"
+    ],
+    "idiom": "use frozen semantic/judge analogue; do not invent lexical next-token equivalence"
+  },
+  "objective_contract": {
+    "divergence": "forward_kl",
+    "teacher_top_k": 32,
+    "temperature": 1.0,
+    "policy_gradient": false,
+    "teacher_requires_grad": false,
+    "student_requires_grad": true,
+    "teacher_frozen": true,
+    "student_only_updates": true
+  },
+  "training_contract": {
+    "student_initialization": "same C0 initialization",
+    "passes": 3,
+    "same_optimizer": true,
+    "same_lr": true,
+    "same_update_count": true,
+    "same_row_order": true,
+    "same_batch_grouping": true,
+    "paired_training_rng_between_S_T": true,
+    "dynamic_rollout_refresh": false
+  },
+  "rng_contract": {
+    "prefix_generation_seed": "TO_FREEZE_BEFORE_PREFIX_GENERATION",
+    "training_seed": "TO_FREEZE_BEFORE_SMOKE",
+    "separate_prefix_and_training_rng": true
+  },
+  "frozen_hash_contract": [
+    "student_prefix_bank_sha256",
+    "teacher_prefix_bank_sha256",
+    "row_set_sha256",
+    "row_order_sha256"
+  ],
+  "sft_ceiling": {
+    "chemistry": "original C2 positive-control checkpoint",
+    "idiom": "original C1 positive-control checkpoint",
+    "posthoc_best_of_A1_P1_P5_forbidden": true
+  },
+  "statistics": {
+    "paired_bootstrap_scope": "evaluation-example sampling uncertainty only",
+    "training_seed_uncertainty_separate": true,
+    "screening_requires_ci_excludes_zero": true,
+    "screening_requires_practical_effect_floor": true,
+    "practical_effect_floor": {
+      "status": "MUST_BE_COMPUTED_FROM_EXISTING_PER_EXAMPLE_OUTPUTS_BEFORE_TRAINING",
+      "numeric_value": null
+    },
+    "confirmation": "at least one additional independent training seed with same direction; third seed if direction flips"
+  },
+  "smoke": {
+    "rows": 64,
+    "score_is_not_a_gate": true,
+    "hard_gates": [
+      "S arm consumes frozen Y_S prefix",
+      "T arm consumes frozen Y_T prefix",
+      "lexical hint absent from Student prompt",
+      "frozen prefix SHA unchanged through replay",
+      "forward_kl_topk=32",
+      "policy_gradient=false",
+      "Teacher requires_grad=false",
+      "Student requires_grad=true"
+    ],
+    "required_row_log_fields": [
+      "row_id",
+      "arm",
+      "prefix_sha",
+      "prefix_token_count",
+      "first_token_ids",
+      "last_token_ids",
+      "teacher_hint_present",
+      "student_hint_present"
+    ],
+    "manual_rows_to_inspect": "5-10"
+  },
+  "tensorboard": {
+    "required": true,
+    "absolute_per_arm": true,
+    "paths": {
+      "chemistry_S": "<RUN>/chemistry/S/tensorboard",
+      "chemistry_T": "<RUN>/chemistry/T/tensorboard",
+      "idiom_S": "<RUN>/idiom/S/tensorboard",
+      "idiom_T": "<RUN>/idiom/T/tensorboard"
+    },
+    "first_step_event_nonempty_gate": true,
+    "verl_logger": [
+      "console",
+      "tensorboard"
+    ]
+  },
+  "interpretation_boundary": "T >> S alone supports only: teacher-supported replay improves targeted soft-KL transfer. Pure Student-prefix causal attribution requires the Teacher-signal audit to rule out target-distribution-strength confounding.",
+  "not_authorized_yet": [
+    "formal S/T training before Teacher-signal audit and 64-row smoke pass",
+    "PDS-OPD scale-up",
+    "weighted KL",
+    "sparse-token KL",
+    "contrastive KL"
+  ],
+  "existing_evidence": {
+    "c0_run": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910",
+    "sft_positive_control_run": "/workspace/mtpatcher/runs/targeted/wa_sft_positive_control_c123_20260910",
+    "opd_o123_run": "/workspace/mtpatcher/runs/targeted/wa_opd_knowledge_conditioned_o123_20260911",
+    "a0_horizon5_run": "/workspace/mtpatcher/runs/targeted/wa_opd_horizon5_o12_20260911",
+    "a4_run": "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912",
+    "a4b_run": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912",
+    "a1_sft_horizon5_run": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912"
+  }
+}
