@@ -1,0 +1,92 @@
+schema_version: 1
+name: offline_prefix_support_native_verl_smoke64_v1
+scientific_class: DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY
+status: ENGINEERING_SMOKE_ONLY
+
+formal_training_authorized: false
+domain: chemistry
+rows: 64
+arms: [S, T]
+
+models:
+  student: /workspace/mtpatcher/models/Qwen3-0.6B
+  teacher: /workspace/mtpatcher/models/Qwen3-8B
+
+frozen_contract:
+  phase_a_run: /workspace/mtpatcher/runs/targeted/offline_prefix_support_replay_prepare64_v2_20260913
+  row_order_sha256: a13880e003fe1581dc0f945687a8d48533f957a4fce165229fd7d3b2f663d147
+  row_set_sha256: 760f660aab2b2ef06cd600706a5fdf016588aeaaa135df78cfcc4bb996f95d21
+  matched_S_used_ids_sha256: 83231dd2da9eb018df0cc92de85a48a30c60ee01fab15149929555626481dccf
+  matched_T_used_ids_sha256: 266a562b8a373446ede0dd7015dbcdbdbf3ae3f9dd3fc1e98de712b213f683e3
+
+objective:
+  loss_mode: forward_kl_topk
+  teacher_topk: 32
+  temperature: 1.0
+  use_task_rewards: false
+  use_policy_gradient: false
+  actor_use_kl_loss: false
+  use_kl_in_reward: false
+  loss_agg_mode: token-mean
+
+optimization:
+  actor_lr: 1.0e-6
+  ppo_epochs: 1
+  training_seed: 20260820
+  global_batch_size: 64
+  optimizer_updates_per_arm: 1
+
+execution:
+  actor_gpus: 8
+  teacher_gpus: 4
+  rollout_tp: 2
+  teacher_tp: 2
+  teacher_dp: 1
+  dtype: bfloat16
+  max_prompt_length: 1024
+  max_response_length: 256
+  actor_use_remove_padding: true
+  actor_gradient_checkpointing: false
+  actor_torch_compile: false
+  actor_dynamic_bsz: true
+  actor_max_token_len_per_gpu: 4096
+  rollout_log_prob_dynamic_bsz: true
+  rollout_log_prob_micro_batch_size_per_gpu: 2
+  rollout_log_prob_max_token_len_per_gpu: 4096
+  rollout_gpu_memory_utilization: 0.35
+  teacher_gpu_memory_utilization: 0.40
+  enforce_eager: true
+
+replay_transport:
+  implementation: custom AgentLoopManager via native RayPPOTrainer extension point
+  dynamic_rollout_refresh: false
+  fresh_student_rollout_forbidden: true
+  native_teacher_topk: true
+  native_actor_update: true
+
+tensorboard:
+  required: true
+  logger: [console, tensorboard]
+  project_name: mtpatcher-prefix-replay-smoke
+  per_arm_absolute_dir: true
+  first_step_event_nonempty_gate: true
+
+hard_gates:
+  - exact frozen response SHA before actor update
+  - Student prompt contains direct source-only prompt
+  - Teacher prompt contains privileged lexical hint
+  - fresh Student rollout client is never accessed
+  - native Teacher top-k width is 32
+  - policy_gradient is false
+  - actor grad_norm is finite and positive
+  - native distillation loss is finite
+  - nonempty TensorBoard event exists for each arm
+  - exactly one trainer step per arm
+  - no checkpoint from the disposable smoke is used as scientific evidence
+
+next_step_after_pass:
+  formal_training_authorized: false
+  remaining_blockers:
+    - compute practical-effect floor from existing per-example outputs
+    - complete preregistered Idiom external semantic/judge analogue
+    - review 64-row smoke before Chemistry S/T formal runs
