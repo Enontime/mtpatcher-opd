@@ -312,23 +312,118 @@ compose_arm S
 compose_arm T
 
 python - "$RUN/chemistry/S/resolved_config.yaml" "$RUN/chemistry/T/resolved_config.yaml" <<'PY'
+from pathlib import Path
 from omegaconf import OmegaConf
-import copy, sys
+import json
+import sys
 
-def clean(path):
-    x = OmegaConf.to_container(OmegaConf.load(path), resolve=True)
-    # Only the data leaf and output/log naming may differ across arms.
-    x["data"]["train_files"] = ["<ARM_PARQUET>"]
-    x["data"]["val_files"] = ["<ARM_PARQUET>"]
-    x["trainer"]["default_local_dir"] = "<ARM_CHECKPOINTS>"
-    x["trainer"]["experiment_name"] = "<ARM_EXPERIMENT>"
-    return x
+def load(path):
+    return OmegaConf.to_container(OmegaConf.load(path), resolve=True)
 
-s = clean(sys.argv[1])
-t = clean(sys.argv[2])
-if s != t:
-    raise SystemExit("S/T resolved configs differ outside allowed arm-specific paths")
+def arm_tokens(cfg):
+    train_files = list(cfg["data"]["train_files"])
+    val_files = list(cfg["data"]["val_files"])
+    if len(train_files) != 1 or len(val_files) != 1:
+        raise SystemExit(
+            f"expected one train/val file, got train={train_files!r} val={val_files!r}"
+        )
+
+    local_dir = str(cfg["trainer"]["default_local_dir"])
+    arm_run = str(Path(local_dir).parent)
+    exp = str(cfg["trainer"]["experiment_name"])
+
+    if not arm_run or not exp or not train_files[0]:
+        raise SystemExit("empty arm-specific resolved-config token")
+
+    return sorted(
+        {
+            str(train_files[0]): "<ARM_PARQUET>",
+            str(val_files[0]): "<ARM_PARQUET>",
+            arm_run: "<ARM_RUN>",
+            exp: "<ARM_EXPERIMENT>",
+        }.items(),
+        key=lambda kv: len(kv[0]),
+        reverse=True,
+    )
+
+def canonicalize(obj, replacements):
+    if isinstance(obj, dict):
+        return {k: canonicalize(v, replacements) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [canonicalize(v, replacements) for v in obj]
+    if isinstance(obj, str):
+        out = obj
+        for raw, marker in replacements:
+            out = out.replace(raw, marker)
+        return out
+    return obj
+
+def collect_diffs(a, b, path="$", out=None, limit=80):
+    if out is None:
+        out = []
+    if len(out) >= limit:
+        return out
+    if type(a) is not type(b):
+        out.append((path, a, b))
+        return out
+    if isinstance(a, dict):
+        for k in sorted(set(a) | set(b)):
+            if len(out) >= limit:
+                break
+            if k not in a or k not in b:
+                out.append((f"{path}.{k}", a.get(k, "<MISSING>"), b.get(k, "<MISSING>")))
+            else:
+                collect_diffs(a[k], b[k], f"{path}.{k}", out, limit)
+        return out
+    if isinstance(a, list):
+        if len(a) != len(b):
+            out.append((path + ".length", len(a), len(b)))
+            return out
+        for i, (x, y) in enumerate(zip(a, b)):
+            if len(out) >= limit:
+                break
+            collect_diffs(x, y, f"{path}[{i}]", out, limit)
+        return out
+    if a != b:
+        out.append((path, a, b))
+    return out
+
+s_raw = load(sys.argv[1])
+t_raw = load(sys.argv[2])
+
+raw_diffs = collect_diffs(s_raw, t_raw)
+print(f"S_T_RAW_RESOLVED_CONFIG_DIFF_COUNT={len(raw_diffs)}")
+for path, sv, tv in raw_diffs[:40]:
+    print(
+        "ARM_SPECIFIC_RAW_DIFF "
+        + json.dumps(
+            {"path": path, "S": sv, "T": tv},
+            ensure_ascii=False,
+            default=str,
+        )
+    )
+
+s = canonicalize(s_raw, arm_tokens(s_raw))
+t = canonicalize(t_raw, arm_tokens(t_raw))
+
+residual = collect_diffs(s, t)
+if residual:
+    print(f"S_T_RESIDUAL_CONFIG_DIFF_COUNT={len(residual)}")
+    for path, sv, tv in residual:
+        print(
+            "UNEXPECTED_RESOLVED_CONFIG_DIFF "
+            + json.dumps(
+                {"path": path, "S": sv, "T": tv},
+                ensure_ascii=False,
+                default=str,
+            )
+        )
+    raise SystemExit(
+        "S/T resolved configs differ after recursive normalization of known arm-specific values"
+    )
+
 print("S_T_RESOLVED_CONFIG_MATCH=PASS")
+print("S_T_CONFIG_EQUIVALENCE_MODE=recursive_known_arm_value_normalization")
 PY
 
 atomic_state "RUNNING" "native_verl_oneupdate_arms"
