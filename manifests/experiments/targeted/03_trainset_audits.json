@@ -1,0 +1,70 @@
+{
+  "artifacts": {
+    "opd_master_log": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_opd_trainset_audit_v1_20260911/master.log"
+    },
+    "opd_run": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_opd_trainset_audit_v1_20260911"
+    },
+    "sft_master_log": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_sft_trainset_audit_c123_20260911/master.log"
+    },
+    "sft_run": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_sft_trainset_audit_c123_20260911"
+    },
+    "tensorboard": {
+      "reason": "This targeted custom Torch-NPU experiment did not emit TensorBoard event files.",
+      "status": "NONE"
+    }
+  },
+  "code": {
+    "common": {
+      "exists": true,
+      "path": "scripts/targeted/trainset_audit_common.py",
+      "sha256": "f8dcf735e844a597d15fdfd16b8053c6b27ff3e07901e82d7e7816169d3d1ebb"
+    },
+    "opd": {
+      "exists": true,
+      "path": "scripts/targeted/wa_opd_trainset_audit_v1.py",
+      "sha256": "63ac5588be0728ab9552b9b92e67ad2ba876ea8ed1b012b2dc93596094b93d19"
+    },
+    "sft": {
+      "exists": true,
+      "path": "scripts/targeted/wa_sft_trainset_audit_c123_v1.py",
+      "sha256": "c883963b6384a53f80e1c9df3381616f2e6d54a15a8f4c3012b2340de61697f5"
+    }
+  },
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "id": "targeted-03-trainset-audits",
+  "interpretation": "The weakness is already visible on the training set; it is not mainly a held-out generalization failure.",
+  "key_result": {
+    "chemistry_train": {
+      "C0": 0.087,
+      "O2": 0.097,
+      "O2_delta": 0.01
+    },
+    "idiom_train": {
+      "C0": 2.68,
+      "C1": 3.368,
+      "C1_delta": 0.688,
+      "O1": 2.746,
+      "O1_delta": 0.066,
+      "OPD_recovery_vs_SFT": 0.0959
+    }
+  },
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "question": "Is the OPD-vs-SFT gap already present on the training examples, or mainly a held-out generalization problem?",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "scientific_class": "DIAGNOSTIC ONLY / MATCHED TRAINSET AUDIT",
+  "status": "PASS"
+}

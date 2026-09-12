@@ -1,0 +1,54 @@
+{
+  "artifacts": {
+    "invalid_duplicate_run": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912_DUPLICATE_ABORTED_20260912_004123"
+    },
+    "master_log": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912/master.log"
+    },
+    "run_dir": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912"
+    },
+    "summary": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912/summary.json"
+    },
+    "tensorboard": {
+      "reason": "This targeted custom Torch-NPU experiment did not emit TensorBoard event files.",
+      "status": "NONE"
+    }
+  },
+  "code": {
+    "script": {
+      "exists": true,
+      "path": "scripts/targeted/a4_kl_signal_localization_chemistry_v1.py",
+      "sha256": "ebaaae102177ec3f076a4ad83437ef4f1a57348ee34462d700224d09ce397fa1"
+    }
+  },
+  "dependencies": {
+    "A0_run": "/workspace/mtpatcher/runs/targeted/wa_opd_horizon5_o12_20260911"
+  },
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "id": "targeted-05-a4-kl-localization",
+  "interpretation": "Teacher-hint-induced distributional change strongly overlaps with the actual OPD KL signal. Simple signal dilution is not a sufficient explanation.",
+  "key_result": {
+    "pearson_hint_vs_opd_kl": 0.5954808,
+    "spearman_hint_vs_opd_kl": 0.7288818,
+    "top10pct_hint_sensitive_hint_gap_mass": 0.9321,
+    "top10pct_hint_sensitive_opd_kl_mass": 0.4914
+  },
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "question": "Does dense OPD place substantial optimization signal on positions where Teacher lexical knowledge changes the target distribution?",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "scientific_class": "DIAGNOSTIC ONLY / KL SIGNAL LOCALIZATION",
+  "status": "PASS"
+}

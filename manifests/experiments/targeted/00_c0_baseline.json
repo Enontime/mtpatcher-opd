@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "idiom_judge": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910/idiom_deepseek_judge/summary.json"
+    },
+    "manifest": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910/manifest.json"
+    },
+    "progress": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910/progress.json"
+    },
+    "run_dir": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910"
+    },
+    "tensorboard": {
+      "reason": "This targeted custom Torch-NPU experiment did not emit TensorBoard event files.",
+      "status": "NONE"
+    }
+  },
+  "code": {
+    "launcher": {
+      "exists": true,
+      "path": "scripts/targeted/run_c0_targeted_diagnostic.sh",
+      "sha256": "4cc8cf8218bfbbb5d10b0e92c36af3bc1aa99c85e084997c7d79bbb7141e324f"
+    },
+    "script": {
+      "exists": true,
+      "path": "scripts/targeted/run_c0_targeted_diagnostic.py",
+      "sha256": "f6e1d210f9760f4d31238efc71377122e28f367f8ff9cf0be8d1cf0e8f3e838b"
+    }
+  },
+  "data": {
+    "contexts": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/targeted_section43_contexts_qwen3_8b_final_20260910"
+    },
+    "diagnostic": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/targeted_diagnostic1000_v1_20260910"
+    }
+  },
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "id": "targeted-00-c0-baseline",
+  "interpretation": "Frozen baseline for all targeted SFT/OPD comparisons.",
+  "key_result": {
+    "chemistry_strict": 0.097,
+    "idiom_mean_0_to_5": 2.613
+  },
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "models": {
+    "student": "/workspace/mtpatcher/models/Qwen3-0.6B",
+    "teacher": null
+  },
+  "question": "What targeted Chemistry and Idiom performance does the frozen C0 Student achieve before adaptation?",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "scientific_class": "BASELINE / FROZEN STUDENT",
+  "status": "PASS"
+}

@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "c2_meta_audit": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/c2_target_meta_audit_v1.json"
+    },
+    "judge_summary": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/deepseek_semantic_judge_full1000_v2/summary.json"
+    },
+    "judged_jsonl": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/deepseek_semantic_judge_full1000_v2/chem_semantic_full3000_judged.jsonl"
+    },
+    "manifest": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/manifest.json"
+    },
+    "posthoc_consistency_audit": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/posthoc_consistency_audit_v1.json"
+    },
+    "run_dir": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912"
+    },
+    "tensorboard": {
+      "reason": "This targeted custom Torch-NPU experiment did not emit TensorBoard event files.",
+      "status": "NONE"
+    }
+  },
+  "caveat": "Frozen judge exhibits a small amount of internal consistency noise; exact +0.017 and nominal p-value are not publication-ready without adjudication.",
+  "code": {
+    "full1000_builder": {
+      "exists": true,
+      "path": "scripts/targeted/a4b_build_chem_semantic_audit_full1000_v2.py",
+      "sha256": "71f0f542393092353b03686a15b18cf9443a4f259f1e37037b53469fc81460b3"
+    },
+    "pilot_builder": {
+      "exists": true,
+      "path": "scripts/targeted/a4b_build_chem_semantic_audit_v1.py",
+      "sha256": "b7bd8bd7df8f63576dfc7ac35ac0220255902c883ff2d98ebf7cc1f1e42c192e"
+    }
+  },
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "id": "targeted-06-a4b-semantic-audit",
+  "interpretation": "Canonical scoring underestimates semantic correctness, but evaluator mismatch does not explain the large OPD-vs-SFT gap.",
+  "key_result": {
+    "C0_semantic": 0.183,
+    "C2_delta": 0.326,
+    "C2_semantic": 0.509,
+    "O2P5_delta": 0.017,
+    "O2P5_semantic": 0.2,
+    "O2_recovery_vs_C2": 0.0521,
+    "clean_C2_minus_C0_delta": 0.3157303370786517
+  },
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "question": "Does strict canonical substring scoring materially underestimate semantic lexical correctness, and can that explain the OPD-vs-SFT gap?",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "scientific_class": "DIAGNOSTIC ONLY / NLP SEMANTIC LEXICAL AUDIT",
+  "status": "PASS_WITH_EVALUATOR_NOISE_CAVEAT"
+}

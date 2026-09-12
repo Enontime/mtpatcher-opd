@@ -1,0 +1,84 @@
+{
+  "current_scientific_chain": [
+    "00_c0_baseline",
+    "01_sft_positive_control",
+    "02_knowledge_conditioned_opd",
+    "03_trainset_audits",
+    "04_a0_opd_horizon5",
+    "05_a4_kl_localization",
+    "06_a4b_semantic_audit",
+    "07_a1_sft_horizon5",
+    "NEXT_prefix_support_swap"
+  ],
+  "experiments": [
+    {
+      "id": "targeted-00-c0-baseline",
+      "manifest": "00_c0_baseline.json",
+      "scientific_class": "BASELINE / FROZEN STUDENT",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-01-sft-positive-control",
+      "manifest": "01_sft_positive_control.json",
+      "scientific_class": "LAB ADAPTATION / TARGETED WA-SFT POSITIVE CONTROL",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-02-knowledge-conditioned-opd",
+      "manifest": "02_knowledge_conditioned_opd.json",
+      "scientific_class": "LAB ADAPTATION / KNOWLEDGE-CONDITIONED OPD",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-03-trainset-audits",
+      "manifest": "03_trainset_audits.json",
+      "scientific_class": "DIAGNOSTIC ONLY / MATCHED TRAINSET AUDIT",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-04-a0-opd-horizon5",
+      "manifest": "04_a0_opd_horizon5.json",
+      "scientific_class": "ABLATION / KNOWLEDGE-CONDITIONED OPD HORIZON",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-05-a4-kl-localization",
+      "manifest": "05_a4_kl_localization.json",
+      "scientific_class": "DIAGNOSTIC ONLY / KL SIGNAL LOCALIZATION",
+      "status": "PASS"
+    },
+    {
+      "id": "targeted-06-a4b-semantic-audit",
+      "manifest": "06_a4b_semantic_audit.json",
+      "scientific_class": "DIAGNOSTIC ONLY / NLP SEMANTIC LEXICAL AUDIT",
+      "status": "PASS_WITH_EVALUATOR_NOISE_CAVEAT"
+    },
+    {
+      "id": "targeted-07-a1-sft-horizon5",
+      "manifest": "07_a1_sft_horizon5.json",
+      "scientific_class": "ABLATION / SFT HORIZON-EXPOSURE CONTROL",
+      "status": "PASS"
+    }
+  ],
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "invalid_runs_retained_for_provenance": [
+    "/workspace/mtpatcher/runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912_DUPLICATE_ABORTED_20260912_004123",
+    "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_20260912_INVALID_PREFLIGHT_DUPLICATE_20260912_020223",
+    "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v2_20260912_INVALID_SHELL_CONTROL_20260912_021458"
+  ],
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "repository_dirty_at_generation": false,
+  "repository_status_at_generation": [],
+  "tensorboard_policy": {
+    "future_training": "New formal training experiments should emit TensorBoard in addition to durable JSON/log artifacts.",
+    "historical_targeted": "NONE"
+  },
+  "title": "MT-PATCHER Targeted WA / OPD Research Index"
+}

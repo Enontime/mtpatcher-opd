@@ -1,0 +1,95 @@
+{
+  "arms": {
+    "C1": "Idiom SFT P1-P5",
+    "C2": "Chemistry SFT P1-P5"
+  },
+  "artifacts": {
+    "C1_summary": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/C1/summary.json"
+    },
+    "C2_summary": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/C2/summary.json"
+    },
+    "idiom_judge": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/idiom_deepseek_judge/summary.json"
+    },
+    "invalid_preflight_run": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_20260912_INVALID_PREFLIGHT_DUPLICATE_20260912_020223"
+    },
+    "invalid_shell_control_run": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v2_20260912_INVALID_SHELL_CONTROL_20260912_021458"
+    },
+    "master_log": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/master.log"
+    },
+    "run_dir": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912"
+    },
+    "tensorboard": {
+      "reason": "This targeted custom Torch-NPU experiment did not emit TensorBoard event files.",
+      "status": "NONE"
+    }
+  },
+  "code": {
+    "runtime_arm_launcher": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/run_arm.sh"
+    },
+    "runtime_master_launcher": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/runs/targeted/a1_sft_horizon5_c12_v3_20260912/run_master.sh"
+    },
+    "trainer": {
+      "exists": true,
+      "path": "scripts/targeted/targeted_sft_c123_pipeline.py",
+      "sha256": "8a33cb039f142546aa98b7fd620b1dee869946867ad935db312ee2944b60fd0d"
+    }
+  },
+  "data": {
+    "diagnostic": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/targeted_diagnostic1000_v1_20260910"
+    },
+    "targets": {
+      "exists": true,
+      "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/targeted_sft_positive_control_targets_qwen3_8b_v1_20260910"
+    }
+  },
+  "generated_utc": "2026-09-12T03:40:51+00:00",
+  "id": "targeted-07-a1-sft-horizon5",
+  "interpretation": "The same targeted knowledge is acquired rapidly under SFT, typically within 1-2 passes. Insufficient update horizon is therefore not a convincing common explanation for weak OPD transfer.",
+  "key_result": {
+    "chemistry": {
+      "C0": 0.097,
+      "P1": 0.233,
+      "P2": 0.293,
+      "P5": 0.298
+    },
+    "idiom": {
+      "P1_delta": 0.441,
+      "P2_delta": 0.536,
+      "P5_delta": 0.55
+    }
+  },
+  "manifest_schema": "mtpatcher-targeted-experiment-v1",
+  "models": {
+    "student_init": "/workspace/mtpatcher/models/Qwen3-0.6B"
+  },
+  "question": "How rapidly does direct sequence supervision acquire the same targeted knowledge across P1-P5?",
+  "repository": {
+    "git_branch": "infra/verl-ascend-parity",
+    "git_head": "38d43788a830f85526b1a6ba961639f5dc01e9c5",
+    "git_head_short": "38d4378",
+    "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend",
+    "provenance_note": "This commit contains the frozen targeted research source snapshot referenced by this manifest."
+  },
+  "scientific_class": "ABLATION / SFT HORIZON-EXPOSURE CONTROL",
+  "status": "PASS"
+}
