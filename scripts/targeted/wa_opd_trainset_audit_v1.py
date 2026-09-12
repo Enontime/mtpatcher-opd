@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+"""Matched train-set task audit for the frozen C0 and O1/O2/O3 models.
+
+This diagnostic asks whether three-pass knowledge-conditioned OPD learned the
+targeted Chemistry and Idiom knowledge on examples drawn from its own training
+set. It does not train a model: workers perform frozen greedy generation,
+score Chemistry locally, and materialize Idiom rows for the frozen external
+judge.
+
+CLI stages are intentionally explicit and resumable::
+
+    master  -> freeze subsets -> launch arm workers -> combine outputs
+    worker  -> resume durable predictions -> generate -> score/materialize
+    combine -> compare Chemistry -> write ordered Idiom judge input
+"""
 
 import argparse
 import hashlib
@@ -9,6 +23,22 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+
+from trainset_audit_common import (
+    DIRECT_TRANSLATION_PROMPT as PROMPT,
+    DIRECT_TRANSLATION_PROMPT_SHA256 as EXPECTED_PROMPT_SHA,
+    append_jsonl_durable,
+    canonical_chemistry_english_name,
+    generate_greedy_direct_translation,
+    load_trainset_audit_model,
+    read_jsonl_records as read_jsonl,
+    require,
+    sha256_file,
+    sha256_utf8,
+    translation_contains_chemistry_target,
+    write_json_atomic as atomic_json,
+    write_jsonl_atomic,
+)
 
 
 ROOT = Path("/workspace/mtpatcher")
@@ -61,106 +91,12 @@ DEVICES = {
 
 SAMPLE_N = 1000
 
-PROMPT = (
-    "Translate the following text into English without additional explanations:"
-    "\n\n{source}\n\n"
-)
-
-EXPECTED_PROMPT_SHA = (
-    "63101d0739ff2ee11b0e5d548b85dcd18be7a241777893326140f12778d9a8b8"
-)
-
-
 def now():
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
 
 
-def sha256_bytes(x):
-    return hashlib.sha256(x).hexdigest()
-
-
-def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def require(cond, msg):
-    if not cond:
-        raise RuntimeError(msg)
-
-
-def read_jsonl(path):
-    rows = []
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            if line.strip():
-                rows.append(json.loads(line))
-    return rows
-
-
-def atomic_text(path, text):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        f.write(text)
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp, path)
-
-
-def atomic_json(path, obj):
-    atomic_text(
-        path,
-        json.dumps(
-            obj,
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=2,
-        )
-        + "\n",
-    )
-
-
-def write_jsonl_atomic(path, rows):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    with open(tmp, "w", encoding="utf-8") as f:
-        for row in rows:
-            f.write(
-                json.dumps(
-                    row,
-                    ensure_ascii=False,
-                    sort_keys=True,
-                )
-                + "\n"
-            )
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp, path)
-
-
-def append_jsonl_durable(path, row):
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "a", encoding="utf-8") as f:
-        f.write(
-            json.dumps(
-                row,
-                ensure_ascii=False,
-                sort_keys=True,
-            )
-            + "\n"
-        )
-        f.flush()
-        os.fsync(f.fileno())
-
-
-def selection_key(domain, row):
+def deterministic_subset_rank(domain, row):
+    """Hash only frozen source identity fields; never use model outcomes."""
     payload = {
         "domain": domain,
         "job_id": row.get("job_id"),
@@ -177,14 +113,15 @@ def selection_key(domain, row):
     return hashlib.sha256(b).hexdigest()
 
 
-def freeze_subset(domain, source, out_path):
+def select_frozen_train_subset(domain, source, out_path):
+    """Select and validate the deterministic first 1,000 rows for one domain."""
     rows = read_jsonl(source)
     require(len(rows) == 5500, f"{domain}: expected 5500 rows, got {len(rows)}")
 
     ranked = sorted(
         rows,
         key=lambda r: (
-            selection_key(domain, r),
+            deterministic_subset_rank(domain, r),
             str(r.get("job_id")),
         ),
     )
@@ -196,11 +133,9 @@ def freeze_subset(domain, source, out_path):
         require(r.get("src_term"), f"{domain}: missing src_term")
 
         if domain == "chemistry":
-            lexical = r.get("lexical_record") or {}
-            en_name = r.get("en_name") or lexical.get("en_name")
-            require(
-                isinstance(en_name, str) and en_name.strip(),
-                f"chemistry job={r.get('job_id')}: missing explicit en_name",
+            canonical_chemistry_english_name(
+                r,
+                missing_message=f"chemistry job={r.get('job_id')}: missing explicit en_name",
             )
 
         if domain == "idiom":
@@ -214,12 +149,13 @@ def freeze_subset(domain, source, out_path):
     return selected
 
 
-def prepare():
+def freeze_and_manifest_trainset_audit_subsets():
+    """Validate sources, freeze matched subsets, and record their provenance."""
     RUN.mkdir(parents=True, exist_ok=True)
     subset_dir = RUN / "frozen_train_subset"
     subset_dir.mkdir(parents=True, exist_ok=True)
 
-    prompt_sha = sha256_bytes(PROMPT.encode("utf-8"))
+    prompt_sha = sha256_utf8(PROMPT)
     require(
         prompt_sha == EXPECTED_PROMPT_SHA,
         f"prompt SHA mismatch: {prompt_sha}",
@@ -239,8 +175,8 @@ def prepare():
     chem_out = subset_dir / "chemistry_train1000.jsonl"
     idiom_out = subset_dir / "idiom_train1000.jsonl"
 
-    chem = freeze_subset("chemistry", CHEM_SOURCE, chem_out)
-    idiom = freeze_subset("idiom", IDIOM_SOURCE, idiom_out)
+    chem = select_frozen_train_subset("chemistry", CHEM_SOURCE, chem_out)
+    idiom = select_frozen_train_subset("idiom", IDIOM_SOURCE, idiom_out)
 
     manifest = {
         "status": "FROZEN",
@@ -296,70 +232,10 @@ def prepare():
     )
 
 
-def extract_en_name(row):
-    direct = row.get("en_name")
-    if isinstance(direct, str) and direct.strip():
-        return direct.strip()
-
-    lexical = row.get("lexical_record")
-    if isinstance(lexical, dict):
-        x = lexical.get("en_name")
-        if isinstance(x, str) and x.strip():
-            return x.strip()
-
-    raise RuntimeError(
-        f"missing explicit canonical en_name job={row.get('job_id')}"
-    )
-
-
-def translate(model, tokenizer, device, source):
-    import torch
-
-    user = PROMPT.format(source=source)
-
-    rendered = tokenizer.apply_chat_template(
-        [{"role": "user", "content": user}],
-        tokenize=False,
-        add_generation_prompt=True,
-        enable_thinking=False,
-    )
-
-    batch = tokenizer(
-        rendered,
-        return_tensors="pt",
-        add_special_tokens=False,
-    )
-
-    batch = {
-        k: v.to(device)
-        for k, v in batch.items()
-    }
-
-    input_len = batch["input_ids"].shape[1]
-
-    with torch.inference_mode():
-        out = model.generate(
-            **batch,
-            do_sample=False,
-            max_new_tokens=512,
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id,
-            use_cache=True,
-        )
-
-    gen = out[0, input_len:]
-    text = tokenizer.decode(
-        gen,
-        skip_special_tokens=True,
-    ).strip()
-
-    return text
-
-
-def worker(label):
+def generate_and_score_opd_trainset_arm(label):
+    """Resume frozen inference for one model and materialize its audit outputs."""
     import torch
     import torch_npu
-    from transformers import AutoModelForCausalLM, AutoTokenizer
 
     require(label in MODELS, f"unknown label {label}")
 
@@ -397,19 +273,7 @@ def worker(label):
         for r in read_jsonl(out_path):
             completed[r["eval_id"]] = r
 
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_path,
-        trust_remote_code=True,
-    )
-
-    model = AutoModelForCausalLM.from_pretrained(
-        model_path,
-        torch_dtype=torch.bfloat16,
-        trust_remote_code=True,
-        low_cpu_mem_usage=True,
-    ).to(device)
-
-    model.eval()
+    tokenizer, model = load_trainset_audit_model(model_path, device)
 
     start = time.time()
     total = len(jobs)
@@ -422,7 +286,7 @@ def worker(label):
         if eval_id in completed:
             continue
 
-        hyp = translate(
+        translation = generate_greedy_direct_translation(
             model,
             tokenizer,
             device,
@@ -438,15 +302,20 @@ def worker(label):
             "entity_key": row.get("entity_key"),
             "src_term": row["src_term"],
             "src_text": row["src_text"],
-            "model_translation": hyp,
+            "model_translation": translation,
         }
 
         if domain == "chemistry":
-            en_name = extract_en_name(row)
+            en_name = canonical_chemistry_english_name(
+                row,
+                missing_message=(
+                    f"missing explicit canonical en_name job={row.get('job_id')}"
+                ),
+            )
             result["en_name"] = en_name
-            result["chemistry_hit"] = (
-                en_name.casefold()
-                in hyp.casefold()
+            result["chemistry_hit"] = translation_contains_chemistry_target(
+                translation,
+                en_name,
             )
 
         else:
@@ -556,7 +425,8 @@ def worker(label):
     )
 
 
-def combine():
+def combine_opd_trainset_audit_outputs():
+    """Write Chemistry comparisons and the ordered O1/O2/O3 Idiom bundle."""
     all_rows = []
     chemistry = {}
 
@@ -647,7 +517,8 @@ def combine():
     print("=" * 72)
 
 
-def master():
+def run_opd_trainset_audit():
+    """Run subset freezing, parallel inference, and server-side aggregation."""
     print("=" * 72)
     print("WA-OPD TRAIN-SET TASK-LEVEL AUDIT v1")
     print(
@@ -673,7 +544,7 @@ def master():
     )
     print("=" * 72, flush=True)
 
-    prepare()
+    freeze_and_manifest_trainset_audit_subsets()
 
     script = Path(__file__).resolve()
 
@@ -782,7 +653,7 @@ def master():
         )
         raise RuntimeError(f"workers failed: {failed}")
 
-    combine()
+    combine_opd_trainset_audit_outputs()
 
     atomic_json(
         RUN / "state.json",
@@ -813,11 +684,11 @@ def main():
     args = parser.parse_args()
 
     if args.cmd == "master":
-        master()
+        run_opd_trainset_audit()
     elif args.cmd == "worker":
-        worker(args.label)
+        generate_and_score_opd_trainset_arm(args.label)
     elif args.cmd == "combine":
-        combine()
+        combine_opd_trainset_audit_outputs()
     else:
         raise RuntimeError(args.cmd)
 

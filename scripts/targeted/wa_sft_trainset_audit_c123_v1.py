@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+"""Matched train-set positive-control audit for SFT arms C1/C2/C3.
+
+This diagnostic evaluates the already-trained SFT checkpoints on the exact
+frozen train1000 subsets used by the OPD audit. It does not train a model:
+workers perform frozen greedy generation, score Chemistry locally, and
+materialize Idiom rows for the frozen external judge.
+
+CLI stages are intentionally explicit and resumable::
+
+    master  -> validate matched subsets -> launch arm workers -> combine
+    worker  -> resume durable predictions -> generate -> score/materialize
+    combine -> compare with recorded C0 -> write ordered Idiom judge input
+"""
 
 import argparse
 import hashlib
