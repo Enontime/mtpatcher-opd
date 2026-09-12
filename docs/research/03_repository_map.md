@@ -1,199 +1,208 @@
-# 仓库地图
+# 仓库结构
 
-本仓库包含多个阶段的 MT-PATCHER 复现与 OPD 实验。
+## 先看文件
 
-历史目录名称主要记录开发时间与实验演化，
-不能直接当作当前科学结构。
+Git 仓库：
 
-## 推荐阅读顺序
+```text
+/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend
+```
 
-### 当前实验状态
+实验数据：
 
-`manifests/experiments/targeted/README.md`
+```text
+/workspace/mtpatcher/data
+```
 
-当前 定向 实验的主要人工入口。
+模型：
 
-### 资产路径
+```text
+/workspace/mtpatcher/models
+```
 
-`manifests/experiments/targeted/ARTIFACT_PATHS.md`
+实验结果：
 
-用于查询数据、代码、run、日志、检查点 和评测结果。
+```text
+/workspace/mtpatcher/runs
+```
 
-### 定向实现代码
+额外日志：
 
-`scripts/targeted/README.md`
+```text
+/workspace/mtpatcher/logs
+```
 
-用于理解当前 定向 SFT / OPD / 诊断 实现。
+如果要查某个 targeted 实验具体在哪：
 
-### 科研总结
+```text
+manifests/experiments/targeted/ARTIFACT_PATHS.md
+```
 
-`docs/research/02_experiment_registry.md`
+---
 
-人工科研总结。
+## Git 仓库里各目录放什么
 
-正式实验状态与 来源追溯 仍以 定向 manifests 为准。
+```text
+MT-Patcher-Reproduction-Ascend/
+├── README.md
+├── configs/
+├── recipes/
+├── scripts/
+├── manifests/
+├── docs/
+├── tests/
+├── legacy/
+└── vendor/
+```
 
-### Ascend 环境
+### `configs/`
 
-`README_ASCEND.md`
+训练和实验配置。
 
-### 版本规则
+当前主要包括：
 
-`VERSIONING.md`
+```text
+configs/opd/
+configs/sft/
+```
 
-## 当前 当前研究代码
+### `recipes/`
 
-### 定向机制实验
+可直接启动的实验 recipe / launcher。
 
-目录：
+主要按方法分：
 
-`scripts/targeted/`
+```text
+recipes/opd/
+recipes/sft/
+```
 
-当前关键实现包括：
+### `scripts/`
 
-- `targeted_sft_c123_pipeline.py`
-  - 定向 SFT 正对照；
+主要代码。
 
-- `targeted_wa_opd_overnight_v3.py`
-  - 已验证 3-pass 知识条件 OPD；
-
-- `targeted_wa_opd_horizon5_o12_v2.py`
-  - 已完成的 A0 five-pass horizon ablation；
-
-- `wa_opd_trainset_audit_v1.py`
-  - OPD 训练集 audit；
-
-- `wa_sft_trainset_audit_c123_v1.py`
-  - SFT matched 训练集 audit；
-
-- `a4_kl_signal_localization_chemistry_v1.py`
-  - A4 KL 信号定位；
-
-- `a4b_build_chem_semantic_audit_full1000_v2.py`
-  - A4b 语义评测器审计。
-
-历史 v1 / v2 OPD 实现已经移动到：
-
-`scripts/targeted/archive/`
-
-不要用于新的正式实验。
-
-## 当前实验索引
-
-定向 experiment manifests：
-
-`manifests/experiments/targeted/`
+```text
+scripts/data/
+scripts/opd/
+scripts/eval/
+scripts/analysis/
+scripts/infra/
+scripts/targeted/
+```
 
 其中：
 
-- `00_c0_baseline.json`
-- `01_sft_positive_control.json`
-- `02_knowledge_conditioned_opd.json`
-- `03_trainset_audits.json`
-- `04_a0_opd_horizon5.json`
-- `05_a4_kl_localization.json`
-- `06_a4b_semantic_audit.json`
-- `07_a1_sft_horizon5.json`
+- `data/`：数据准备；
+- `opd/`：新的 OPD 方法代码；
+- `eval/`：评估脚本；
+- `analysis/`：分析脚本；
+- `infra/`：环境、恢复、框架兼容和基础设施；
+- `targeted/`：当前 targeted 研究线已经跑过的实现和分析代码。
 
-下一实验：
+### `manifests/`
 
-`08 — Prefix-Support Swap`
+实验索引和来源信息。
 
-## 历史科研代码
+当前 targeted 实验主要看：
 
-例如：
+```text
+manifests/experiments/targeted/
+```
 
-- `scripts/pilot_v2/`
-- `scripts/mtpatcher_v3/`
-- `scripts/mtpatcher_v4/`
-- ...
-- `scripts/mtpatcher_v14/`
-- `scripts/mtpatcher_paper_repro/`
-- `scripts/mtpatcher_paper_faithful_v2/`
-- `scripts/mtpatcher_rq0/`
+其中：
 
-这些目录代表过去不同阶段的实现。
+```text
+README.md
+ARTIFACT_PATHS.md
+00_c0_baseline.json
+01_sft_positive_control.json
+02_knowledge_conditioned_opd.json
+03_trainset_audits.json
+04_a0_opd_horizon5.json
+05_a4_kl_localization.json
+06_a4b_semantic_audit.json
+07_a1_sft_horizon5.json
+```
 
-保留它们的主要原因是 来源追溯。
+### `docs/research/`
 
-新的研究不要通过最大版本号寻找“最新方法”。
+给人看的科研说明。
 
-## 历史时间线
+主要看：
 
-已有历史时间线：
+```text
+01_research_overview.md
+02_experiments.md
+03_repository_map.md
+```
 
-`docs/research/04_historical_experiment_timeline.md`
+### `tests/`
 
-## 基础设施
+当前框架和数据处理相关测试。
 
-- `scripts/infra/`
-  - runtime recovery、launcher、Ascend 基础设施工具；
+### `legacy/`
 
-- `configs/`
-  - 声明式训练配置；
+历史代码和旧实验实现。
 
-- `recipes/`
-  - shell 级可复现实验 recipe；
+这些代码仍然保留，因为旧结果有时需要回溯到当时的实现。
 
-- `manifests/`
-  - 实验、runtime、数据身份；
+### `vendor/`
 
-- `patches/`
-  - 新的正式 framework patch；
+外部依赖、第三方代码或 patch 相关内容。
 
-- `tests/`
-  - 实现级测试。
+---
 
-历史 patch 如果仍位于旧目录，
-可以继续保留用于 来源追溯。
+## 仓库外的大文件
 
-## Git 外部状态
+Git 仓库只放代码、配置、文档和索引。
 
-以下大型状态有意放在 Git 仓库之外：
+真正的大数据、模型和训练结果在：
 
-### 数据
+```text
+/workspace/mtpatcher/data
+/workspace/mtpatcher/models
+/workspace/mtpatcher/runs
+/workspace/mtpatcher/logs
+```
 
-`/workspace/mtpatcher/data/`
+当前 `runs/` 体积已经很大，所以不会为了目录好看去移动历史 run。
 
-包括数据集和生成训练材料。
+---
 
-### Run
+## targeted 这一条线
 
-`/workspace/mtpatcher/runs/`
+主要结果目录：
 
-包括：
+```text
+/workspace/mtpatcher/runs/targeted
+```
 
-- logs；
-- 检查点s；
-- progress state；
-- evaluation；
-- 评测模型输出；
-- 运行专属产物。
+主要代码：
 
-### 模型
+```text
+scripts/targeted/
+```
 
-`/workspace/mtpatcher/models/`
+主要数据：
 
-仓库内部只保留能够解释或重建实验所需的：
+```text
+/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/
+```
 
-- manifests；
-- summaries；
-- scripts；
-- configs；
-- recipes；
-- documentation；
-- tests。
+主要实验索引：
 
-## results/
+```text
+manifests/experiments/targeted/
+```
 
-仓库内的：
+这四个位置一起看，基本就能把当前研究线完整还原出来。
 
-`results/`
+---
 
-只用于保存少量历史分析摘要或需要 Git 来源追溯 的 compact outputs。
+## 说明
 
-完整生成结果仍以：
+仓库现在同时包含早期复现代码、框架排错代码和当前研究代码。
 
-`/workspace/mtpatcher/runs/`
+没有继续大规模移动旧文件，主要是为了保留历史 run 与代码之间的对应关系。
 
-为主。
+以后新增实验尽量按新的目录分层组织；旧实验保持原路径。

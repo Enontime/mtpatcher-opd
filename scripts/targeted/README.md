@@ -1,174 +1,185 @@
-# 定向实验代码
+# Targeted experiments
 
-本目录保存当前 MT-PATCHER / OPD 定向知识-transfer 研究线的实现。
+## 先看文件
 
-## 数据构造
+当前目录：
 
-以下前缀的脚本主要用于构造和冻结 化学 / 成语 定向数据：
+```text
+scripts/targeted/
+```
 
-- `generate_targeted_*`
-- `repair_targeted_*`
-- `finalize_targeted_*`
-- `materialize_targeted_*`
-- `merge_targeted_*`
+实验结果：
 
-这些文件主要属于 来源追溯 资产。
+```text
+/workspace/mtpatcher/runs/targeted
+```
 
-在日常 方法开发 中通常不需要重新运行。
+targeted 数据：
 
-## C0 基线
+```text
+/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823
+```
 
-`run_c0_targeted_diagnostic.py`
+每个实验具体对应的数据、run、日志：
 
-用于冻结并评测 Qwen3-0.6B C0 baseline。
+```text
+manifests/experiments/targeted/ARTIFACT_PATHS.md
+```
 
-## SFT 正对照
+---
 
-主要实现：
+## 主要脚本
 
-`targeted_sft_c123_pipeline.py`
+### C0 baseline
 
-实验 arm：
+```text
+run_c0_targeted_diagnostic.py
+run_c0_targeted_diagnostic.sh
+```
 
-- C1：成语 SFT；
-- C2：化学 SFT；
-- C3：成语 + 化学 combined SFT。
+生成冻结 C0 在 targeted diagnostic set 上的翻译和基线结果。
 
-目的：
+### SFT positive control
 
-证明当前 定向知识 与 evaluator 确实具有可学习信号。
+```text
+materialize_targeted_sft_positive_control_targets.py
+targeted_sft_c123_pipeline.py
+run_targeted_sft_c123_fullchain.sh
+```
 
-## 知识条件 OPD
+用于构造 SFT target，并训练：
 
-3-pass 参考实现：
+- C1：Idiom；
+- C2：Chemistry；
+- C3：Combined。
 
-`targeted_wa_opd_overnight_v3.py`
+### Knowledge-conditioned OPD
 
-5-pass horizon 实验实现：
+```text
+targeted_wa_opd_overnight_v3.py
+```
 
-`targeted_wa_opd_horizon5_o12_v2.py`
+当前主要的 targeted OPD 实现。
 
-实验 arm：
+Student 只看 source。
 
-- O1：成语；
-- O2：化学；
-- O3：Combined。
+Teacher 除了 source，还获得对应的 lexical side information。
 
-科学标签：
+训练仍然使用 Student-generated trajectory 上的 top-k forward KL。
 
-`LAB ADAPTATION / KNOWLEDGE-CONDITIONED OPD`
+### Train-set audit
 
-语义：
+```text
+trainset_audit_common.py
+wa_opd_trainset_audit_v1.py
+wa_sft_trainset_audit_c123_v1.py
+```
 
-- 学生模型 只看到 source；
-- 教师模型 在相同 学生模型 轨迹前缀 上额外看到 词汇侧信息；
-- 教师模型 与 学生模型 通过 软 KL 监督 交互。
+检查 OPD / SFT 在训练样本上到底学到了多少。
 
-## 训练过程与机制诊断
+### A0 horizon
 
-### 训练集审计s
+```text
+targeted_wa_opd_horizon5_o12_v2.py
+horizon5_matched_traincurve_eval_v1.py
+```
 
-- `wa_opd_trainset_audit_v1.py`
-- `wa_sft_trainset_audit_c123_v1.py`
-- `trainset_audit_common.py`
+把 O1 / O2 延长到 5 个 pass，并看 held-out 和 matched train curve。
 
-作用：
+### A4 KL localization
 
-在冻结、确定性的 训练子集 上评测 task-level learning，
-判断 OPD 的弱结果是否已经出现在训练数据本身。
+```text
+a4_kl_signal_localization_chemistry_v1.py
+```
 
-### A0：Horizon-5
+分析 Teacher lexical hint 改变分布的位置，和实际 OPD KL signal 是否重合。
 
-- `targeted_wa_opd_horizon5_o12_v2.py`
-- `horizon5_matched_traincurve_eval_v1.py`
+### A4b semantic audit
 
-结论：
+```text
+a4b_build_chem_semantic_audit_v1.py
+a4b_build_chem_semantic_audit_full1000_v2.py
+```
 
-单纯把 OPD 从 3 pass 延长到 5 pass，
-不能显著解决 定向知识 uptake 过弱的问题。
+构造 Chemistry semantic audit，用来区分：
 
-### A4：KL Signal Localization
+- strict canonical miss；
+- 合理同义表达；
+- 部分正确；
+- 真正错误。
 
-`a4_kl_signal_localization_chemistry_v1.py`
+---
 
-作用：
+## 数据构造相关脚本
 
-分析 教师模型 词汇提示 引发的 distributional shift
-与实际 OPD KL 信号之间的空间重叠。
+这一目录里还保留了 targeted context 和 SFT target 的生成、repair、freeze 脚本，例如：
 
-### A4b：Semantic Lexical Audit
+```text
+generate_targeted_contexts_qwen3_8b_v1.py
+generate_targeted_contexts_qwen3_8b_v2.py
+repair_targeted_contexts_qwen3_8b_v2r2.py
+repair_targeted_contexts_qwen3_8b_v2r3.py
+finalize_targeted_contexts_v2r4.py
+finalize_targeted_contexts_v2r5.py
+finalize_targeted_context_near_duplicates.py
+```
 
-- `a4b_build_chem_semantic_audit_v1.py`
-- `a4b_build_chem_semantic_audit_full1000_v2.py`
+这些脚本主要用于重建当前 frozen dataset 的生成过程。
 
-作用：
+---
 
-审计 化学 strict canonical substring evaluator 的语义噪声，
-区分真实实体修复、canonical paraphrase 与真实退化。
+## `archive/`
 
-### A1：SFT Horizon-5
+```text
+scripts/targeted/archive/
+```
 
-对应评测资产记录在 定向实验 manifests 中。
+这里放已经被后续版本替代，但仍需要保留的旧 targeted OPD 脚本。
 
-结论：
+当前实验不要从 archive 里启动。
 
-SFT 对同样 定向知识 的大部分学习通常在 P1–P2 已经完成，
-因此训练轮数不足不再是 OPD 弱学习的主要解释。
+---
 
-## 下一步：08 Prefix-Support Swap
+## 新实验放哪
 
-下一项机制诊断：
+现有 targeted 脚本先保持原路径。
 
-`Prefix-Support Swap`
+新的正式方法实现尽量放：
 
-问题：
+```text
+scripts/opd/
+```
 
-> 学生模型生成的前缀支持 是否限制了 软 KL
-> 对 定向知识 的有效传递？
+新的分析：
 
-该实验属于 诊断，
-不应被描述为 canonical OPD method。
+```text
+scripts/analysis/
+```
 
-如果 教师模型 / 参考译文支持的前缀 明显提高 软 KL knowledge uptake，
-后续才进入 localized correction bridge + resumed 学生模型 rollout 的方法实验。
+新的评估：
 
-## 已废弃 OPD 实现
+```text
+scripts/eval/
+```
 
-历史文件：
+启动 recipe：
 
-- `archive/targeted_wa_opd_overnight_v1.py`
-- `archive/targeted_wa_opd_overnight_v2.py`
+```text
+recipes/
+```
 
-v1：
+实验索引：
 
-历史 semantic / numerical gate 失败实现。
+```text
+manifests/experiments/targeted/
+```
 
-v2：
+---
 
-中间实现，不作为正式科学结果。
+## 说明
 
-新的实验不要从 v1 / v2 继续开发。
+`targeted/` 是这几天快速推进实验时自然形成的一组代码。
 
-## 当前科学流程
+目前不再为了目录整齐去移动已经跑过的脚本，因为很多 run、hash 和文档已经引用这些路径。
 
-C0 baseline
-
-→ C1 / C2 / C3 SFT 正对照
-
-→ O1 / O2 / O3 3-pass 知识条件 OPD
-
-→ matched 训练集 audit
-
-→ A0 5-pass horizon 诊断
-
-→ A4 KL 信号定位
-
-→ A4b 语义评测器审计
-
-→ A1 SFT horizon control
-
-→ 08 Prefix-Support Swap
-
-→ 若 support hypothesis 成立，再进入 local correction bridge
-
-→ 小规模 PDS-OPD pilot。
+后续新实验会逐步使用更清晰的 `scripts/opd`、`scripts/analysis`、`scripts/eval` 分层。
