@@ -1,146 +1,293 @@
-# 实验登记与科研总结
+# 实验登记
 
-最后一次主要更新：2026-09-12
+## 路径入口
 
-本文是人工可读的科研总结。
+通用训练 / 评测：
 
-当前 定向 实验的**正式状态与 来源追溯**
-以：
+```text
+/workspace/mtpatcher/runs/sft
+/workspace/mtpatcher/runs/opd
+/workspace/mtpatcher/runs/science
+```
 
-`manifests/experiments/targeted/`
+诊断：
 
-中的 README、INDEX 和逐实验 manifest 为准。
+```text
+/workspace/mtpatcher/runs/diagnostics
+/workspace/mtpatcher/runs/overnight
+```
 
-原始运行结果位于：
+Strong reproduction / 历史 pipeline：
 
-`/workspace/mtpatcher/runs/`
+```text
+/workspace/mtpatcher/runs/mtpatcher_v3_full6565_20260823
+scripts/mtpatcher_v3
+scripts/mtpatcher_v10
+scripts/mtpatcher_v11
+scripts/mtpatcher_v14
+```
 
-大型数据位于：
+Targeted：
 
-`/workspace/mtpatcher/data/`
+```text
+/workspace/mtpatcher/runs/targeted
+manifests/experiments/targeted/ARTIFACT_PATHS.md
+```
 
-## 总研究问题
+正式配置：
 
-能否用 On-Policy Distillation（OPD）替代或改造 MT-PATCHER
-中的 sequence distillation，在保持数据效率的同时减少 流程 复杂度？
+```text
+configs/sft/
+configs/opd/
+recipes/sft/
+recipes/opd/
+manifests/experiments/
+```
 
-当前 定向 机制实验进一步隔离一个更窄的问题：
+## A. Foundation
 
-> 对于已经证明能被 ordinary SFT 学会的 定向翻译知识，
-> OPD 为什么只能吸收其中很小一部分？
+| ID | 实验 | 主要路径 | 结果 / 状态 |
+|---|---|---|---|
+| F0 | Base Student | `/workspace/mtpatcher/models/Qwen3-0.6B` | Macro BLEU 17.3485 |
+| F1 | Historical Full SeqKD20k | historical / `runs/sft` | P3 ≈ 19.1652 |
+| F2 | Recovered Formal SeqKD P1 | `runs/science/seqkd_p1_rope_fix_final_20260909_v1` | 18.5177，恢复正控制 |
+| F3 | Canonical Full OPD | `runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058` + recovery | P3 19.1036 |
+| F4 | Canonical SeqKD vs OPD eval | `runs/science/` | evaluator / RoPE root cause 已关闭 |
 
-## 当前主要实验矩阵
+Foundation 结论：
 
-| ID | 方法 | Target | 状态 | 主要结论 |
-|---|---|---|---|---|
-| C0 | Frozen Qwen3-0.6B | 基线 | PASS | 固定 定向 与 通用机器翻译 baseline |
-| C1 | SFT | 成语 | PASS | 成语知识可明显学习 |
-| C2 | SFT | 化学 | PASS | 化学知识可明显学习 |
-| C3 | SFT | 成语 + 化学 | PASS | 两个域均可学习 |
-| O1 | 3-pass 知识条件 OPD | 成语 | PASS | 有正向但较弱的 transfer |
-| O2 | 3-pass 知识条件 OPD | 化学 | PASS | 正向极弱 |
-| O3 | 3-pass 知识条件 OPD | Combined | PASS | 正向但明显弱于 SFT |
-| A0 | 5-pass OPD horizon ablation | O1/O2 | PASS | 增加 pass 不能解决主要差距 |
-| A4 | KL 信号定位 | 化学 | PASS | 教师模型 hint shift 与 OPD KL 有较强重叠 |
-| A4b | Semantic lexical audit | 化学 | PASS with caveat | evaluator 有噪声，但不是主要解释 |
-| A1 | SFT horizon-5 control | 成语 + 化学 | PASS | SFT 在 P1–P2 已吸收大部分收益 |
-| 08 | Prefix-Support Swap | Mechanism 诊断 | NEXT | 下一步机制因果诊断 |
+```text
+Full OPD 20000   19.1036
+Full SeqKD 20000 19.1652
+```
 
-## 已建立的关键结果
+Full-budget OPD 已基本恢复 Full SeqKD 的收益。
 
-### 化学 留出集
+## B. Strong Reproduction / Selection
 
-- C0：0.097
-- C2 SFT：0.261，delta +0.164
-- C3 SFT：0.261，delta +0.164
-- O2 OPD：0.107，delta +0.010
-- O3 OPD：0.106，delta +0.009
+| ID | 实验 | Source / treatment | Macro BLEU | 结论 |
+|---|---|---|---:|---|
+| S0 | Base | none | 17.3485 | anchor |
+| S1 | K1All / PE | 11,792 selected parents | 17.5139 | PE 单独提升较弱 |
+| S2 | K2 | 4,960 strict selected | 17.3887 | K2 source utility 很弱 |
+| S3 | RandomK1 | matched historical control | 17.3127 | selection 对照 |
+| S4 | Random SeqKD | random 4,960 | 18.2658 | equal-budget KD |
+| S5 | Same-source SeqKD | K2 4,960 | 18.4151 | 同 source Teacher-target control |
+| S6 | Full SeqKD | 20,000 | 19.1652 | full anchor |
 
-### 成语 留出集
+Broad20k：
 
-- C0：2.613
-- O1 OPD：2.721，delta +0.108
-- O3 OPD：2.716，delta +0.103
+```text
+K1 = 58.96%
+K2 = 24.8%
+```
 
-### 成语 train1000
+当前 selective density 仍高于论文目标量级。
 
-- C0：2.680
-- C1 SFT：3.368，delta +0.688
-- C3 SFT：3.352，delta +0.672
-- O1 OPD：2.746，delta +0.066
-- O3 OPD：2.726，delta +0.046
+## C. PDS / WA
 
-Matched 训练集 comparison 表明：
+### PDS
 
-OPD 的弱学习已经出现在训练样本上，
-因此主要问题不是 留出集泛化失败。
+| ID | 实验 | Rows | Macro BLEU |
+|---|---|---:|---:|
+| P0 | K1All / PE | 11,792 parents | 17.5139 |
+| P1 | K1All + PDS | 68,917 | 18.5696 |
+| P2 | Parent-matched repeat | 68,917 | 16.7592 |
 
-### General MT cost
+主要对比：
 
-相对 C0 的 Macro BLEU delta：
+```text
+PDS - Repeat  = +1.8104
+PDS - Base    = +1.2211
+PDS - K1All   = +1.0557
+```
 
-- C1 SFT：-0.812508
-- C2 SFT：-2.171510
-- C3 SFT：-0.842484
-- O1 OPD：-0.585807
-- O2 OPD：-0.094100
-- O3 OPD：-0.408422
+PDS treatment 是 strong reproduction 中最明确的正机制。
 
-当前可以概括为：
+### WA
 
-> SFT 能更强地注入 定向知识，但对 通用机器翻译 的破坏更大。
+General-MT 两 seed：
 
-> OPD 更保守，对 通用机器翻译 的副作用更小，但 定向知识 uptake 明显偏弱。
+```text
+seed1 ≈ -0.0127
+seed2 ≈ +0.0131
+mean  ≈ 0
+```
 
-## Horizon 诊断结论
+登记结论：
 
-A0 已完成。
+```text
+general-MT WA incremental BLEU: no robust gain
+targeted unseen-word / error-anticipation mechanism: unresolved
+```
 
-主要结果：
+## D. Low-budget OPD
 
-- 从 3 pass 增加到 5 pass，没有显著缩小 定向 OPD 与 SFT 的差距；
-- 因此单纯增加训练轮数不再是主要方向。
+| ID | 实验 | Source budget | Macro BLEU | 结论 |
+|---|---|---:|---:|---|
+| O-FULL | Full OPD | 20,000 | 19.1036 | strong |
+| O-SEL | Selective OPD | 4,960 | 17.9600 | 34.8% Full-OPD gain recovery |
+| O-RND | Random OPD | 4,960 | 17.9861 | 36.3% recovery |
 
-A1 同样已经完成。
+```text
+Selective - Random = -0.0261
+```
 
-SFT 在 化学 与 成语 上都显示：
+当前 K2 selection 对 OPD 没有可见价值。
 
-- P1 已获得大部分最终收益；
-- P2 基本接近最终饱和。
+低预算 OPD 同时弱于 SeqKD：
 
-这说明当前 定向知识 本身可以快速被模型吸收。
+```text
+Random SeqKD - Random OPD ≈ +0.2797
+Same-source SeqKD - Selective OPD ≈ +0.4551
+```
 
-## 当前机制判断
+## E. Targeted knowledge transfer
 
-现有证据提高了以下假说的优先级：
+精确 artifact：
 
-> OPD 的瓶颈可能位于 supervision pathway，
-> 尤其是 软 KL 被施加在哪些 学生模型 trajectory / prefix states 上。
+```text
+manifests/experiments/targeted/ARTIFACT_PATHS.md
+```
 
-但这一机制尚未被正式证明。
+### C0 / C1 / C2 / C3
 
-## 下一步
+| Arm | 方法 | Target | 主要结果 |
+|---|---|---|---|
+| C0 | frozen Student | baseline | Chemistry .097; Idiom 2.613 |
+| C1 | SFT | Idiom | Idiom 3.132 (+.519) |
+| C2 | SFT | Chemistry | Chemistry .261 (+.164) |
+| C3 | SFT | combined | Idiom 3.141 (+.528); Chemistry .261 |
 
-下一实验：
+### O1 / O2 / O3
 
-`08 — Prefix-Support Swap`
+| Arm | 方法 | Target | 主要结果 |
+|---|---|---|---|
+| O1 | knowledge-conditioned OPD | Idiom | +.108 |
+| O2 | knowledge-conditioned OPD | Chemistry | +.010 |
+| O3 | knowledge-conditioned OPD | combined | Idiom +.103; Chemistry +.009 |
 
-科学类别：
+### Train-set audits
 
-`DIAGNOSTIC ONLY`
+```text
+Idiom:
+C0 2.680
+O1 2.746 (+.066)
+C1 3.368 (+.688)
 
-目的：
+Chemistry:
+C0 .087
+O2 .097 (+.010)
+```
 
-在尽量保持相同 软 KL 条件下，
-比较 学生模型-supported 与 教师模型/reference-supported prefix replay，
-判断 prefix support 是否会显著影响 定向知识 transfer。
+弱 OPD learning 在 train examples 上就存在。
 
-如果 support hypothesis 成立：
+### A0：OPD Horizon-5
 
-进入 localized correction bridge + resumed 学生模型 rollout。
+```text
+Idiom P1..P5:
++.120, +.128, +.135, +.127, +.141
 
-如果不成立：
+Chemistry P5:
+约 +.009
+```
 
-转向 objective / gradient effectiveness 的诊断。
+结论：多训几轮不是共同主因。
 
-大规模 PDS-OPD 暂不优先启动。
+### A4：KL Signal Localization
+
+```text
+256 Chemistry rows
+6929 tokens
+Pearson  ≈ .596
+Spearman ≈ .729
+```
+
+top10% hint-sensitive tokens：
+
+```text
+49.14% OPD KL mass
+93.21% hint-gap mass
+```
+
+结论：简单 dense-KL dilution 解释不够。
+
+### A4b：Semantic Audit
+
+```text
+C0    .183
+O2P5  .200
+C2    .509
+```
+
+结论：string evaluator / judge noise 存在，但不能解释 OPD-SFT gap。
+
+### A1：SFT Horizon-5
+
+Idiom：
+
+```text
+P1 +.441
+P2 +.536
+P5 +.550
+```
+
+Chemistry：
+
+```text
+C0 .097
+P1 .233
+P2 .293
+P5 .298
+```
+
+结论：direct sequence supervision 在 1–2 pass 就吸收大部分知识。
+
+### 下一项：Prefix-Support Swap
+
+```text
+planned / not launched
+```
+
+比较：
+
+```text
+Student-prefix soft-KL
+vs
+Teacher-supported-prefix soft-KL
+```
+
+## F. Historical / closed branches
+
+这些保留用于解释研究路线，不进入当前主结果表：
+
+```text
+scripts/pilot_v2/
+scripts/mtpatcher_v4/
+scripts/mtpatcher_v5/
+scripts/mtpatcher_v6/
+scripts/mtpatcher_v7/
+scripts/mtpatcher_v8/
+scripts/mtpatcher_v9/
+top-level mtpatcher_ecropd_* / recovery probes
+```
+
+其中包括 custom full-vocab FKL / RKL、EC-ROPD、correction / repair、teacher-leg / recovery probes、早期 GRPO / PEGRL-inspired controls。
+
+这些实验帮助发现 state / trajectory / correction 相关问题，但和当前 canonical Verl top-k FKL 的算法语义不同，不能混成一条结果。
+
+## 说明
+
+这个文件只负责“有哪些实验、在哪里、结果是什么”。
+
+为什么这样设计、结果怎样连接，看：
+
+```text
+docs/research/02_experiments.md
+```
+
+历史顺序看：
+
+```text
+docs/research/04_historical_experiment_timeline.md
+```

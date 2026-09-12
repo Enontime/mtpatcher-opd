@@ -1,303 +1,355 @@
-# Historical Experiment Timeline
+# 历史实验时间线
 
-This document maps the older numbered experiment directories to their scientific
-roles.
+## 历史资产在哪
 
-The numbered directories are historical generations, not a recommended API or
-current experiment hierarchy.
+早期 pilot：
 
-## Phase 0 — Pilot
+```text
+scripts/pilot_v2/
+/workspace/mtpatcher/runs/pilot_v2_*
+```
 
-### `scripts/pilot_v2/`
+Strong reproduction：
 
-Approximate period:
+```text
+scripts/mtpatcher_v3/
+scripts/mtpatcher_v11/
+scripts/mtpatcher_v14/
+/workspace/mtpatcher/runs/mtpatcher_v3_full6565_20260823
+```
 
-2026-08-20 to 2026-08-23
+早期 OPD / correction：
 
-Main themes:
+```text
+scripts/mtpatcher_v4/
+scripts/mtpatcher_v5/
+scripts/mtpatcher_v6/
+scripts/mtpatcher_v7/
+scripts/mtpatcher_v8/
+scripts/mtpatcher_v9/
+```
 
-- Qwen3-0.6B supervised fine-tuning
-- early GRPO experiments
-- BLEU / chrF reward experiments
-- early PEGRL-inspired training
-- initial Ascend migration
+Selection OPD：
 
-Status:
+```text
+scripts/mtpatcher_v10/
+```
 
-Historical pilot code.
+Canonical SeqKD / OPD：
 
-For current research, do not start here.
+```text
+configs/
+recipes/
+/workspace/mtpatcher/runs/sft
+/workspace/mtpatcher/runs/opd
+/workspace/mtpatcher/runs/science
+```
 
----
+Targeted mechanism：
 
-## Phase 1 — Initial OPD and strong reproduction
+```text
+scripts/targeted/
+/workspace/mtpatcher/runs/targeted
+manifests/experiments/targeted/
+```
 
-### `scripts/mtpatcher_v3/`
+## 8 月中下旬：Pilot-V2 与最初 OPD
 
-Approximate period:
+最早阶段主要确认 Qwen3-0.6B Student 能否训练、Teacher / Student 的翻译质量差距、human SFT / SeqKD 是否有提升，以及 OPD / GRPO 是否值得继续。
 
-2026-08-23 to 2026-09-01
+这一阶段留下：
 
-Main themes:
+```text
+scripts/pilot_v2
+runs/pilot_v2_sft
+runs/pilot_v2_grpo
+```
 
-- initial forward-KL OPD
-- matched-data experiments
-- broad20k experiments
-- teacher SeqKD provenance locking
-- strong reproduction dataset freezing
-- PDS construction and validation
-- WA reproduction
-- paired WA experiments
+今天应把它们看作 feasibility / history，不是最终 comparator。
 
-This directory became the main strong-reproduction branch before the later
-canonical Verl implementation.
+## 8 月 23–27 日：PE / PDS / WA pipeline 与 custom OPD
 
-Status:
+围绕：
 
-Important historical provenance.
+```text
+PE → PDS → WA
+```
 
----
+做数据构造、Feedbacker、repair、train/eval；同时尝试 custom Torch-NPU forward KL、reverse KL、PGRKL 等。
 
-## Phase 2 — KL objective exploration
+重要认识：
 
-### `scripts/mtpatcher_v4/`
+- pipeline 能跑；
+- Student 可以通过 direct supervision 提升；
+- early custom OPD full-scale 不稳定；
+- trainer/debug 问题与 method 问题必须分开。
 
-Approximate period:
+## 8 月 27–29 日：EC-ROPD / repair 与第一次重置
 
-2026-08-24
+重点探索 error-conditioned state、local correction、resume、teacher leg。
 
-Main themes:
+matched-512 有过小正信号，但 full-scale 没形成稳定主效应。
 
-- reverse KL
-- PGRKL
-- audited PGRKL variants
-- clean-room OPD implementations
-- teacher-alignment diagnostics
-- KL case extraction
+8 月 29 日路线重置回：
 
-Status:
+```text
+先做可靠 reproduction / positive control
+再回答 OPD replacement
+```
 
-Diagnostic and objective-design history.
+当时的 6565 positive control 包括：
 
----
+```text
+Full SeqKD6565       +1.465 BLEU
+Selected SeqKD3732   +1.182
+Equal-budget3732     +1.050
+```
 
-## Phase 3 — Top-k and patch-aware OPD
+这说明 Student 能学，但 selective efficiency 尚未达到论文水平。
 
-### `scripts/mtpatcher_v5/`
+## 8 月 30–31 日：PDS 强正结果
 
-Approximate period:
+Broad20k / K1 / K2 逐渐冻结：
 
-2026-08-24
+```text
+Base                  17.3485
+K1All                 17.5139
+Random SeqKD4960      18.2658
+SameSource SeqKD4960  18.4151
+Full SeqKD20k         19.1652
+```
 
-Main themes:
+PDS 对照：
 
-- forward-KL top-k128
-- entropy/temperature OPD variants
-- patch-mask construction
-- patch-aware data
+```text
+K1All + PDS           18.5696
+Matched Repeat        16.7592
+difference            +1.8104
+```
 
-Status:
+PDS 因而成为 strong reproduction 中最明确的机制正证据。
 
-Historical method exploration.
+同时发现：
 
----
+```text
+PE+PDS = 68,917 Student rows
+```
 
-## Phase 4 — Correction training
+已经大于 Full SeqKD20k，因此 row-efficiency 叙事必须放弃。
 
-### `scripts/mtpatcher_v6/`
+## 9 月初：WA 通用 MT 没有稳定增益
 
-Approximate period:
+WA 两 seed：
 
-2026-08-24
+```text
+约 -0.0127
+约 +0.0131
+```
 
-Main themes:
+均值接近 0。
 
-- correction forward-KL
-- HCCL debugging
-- correction-model recovery
+旧的“WA mechanism failed”说法应废弃。当前准确表述是：
 
-Status:
+```text
+general-MT WA gain 未复现
+targeted unseen-word mechanism 仍 unresolved
+```
 
-Historical method/infrastructure exploration.
+## 9 月 2–3 日：迁移到 Verl
 
----
+师兄建议后，项目从大量 custom trainer 转向：
 
-### `scripts/mtpatcher_v7/`
+```text
+Verl
++
+thin MT adapter
++
+config / recipe / manifest
+```
 
-Approximate period:
+正式建立：
 
-2026-08-24
+```text
+configs/
+recipes/
+manifests/
+scripts/data/
+scripts/infra/
+tests/
+```
 
-Main themes:
+Canonical SeqKD 完成 3 pass。
 
-- correction NLL
+Canonical OPD 第一次 run 在 Pass1 后中断，保留 `global_step_1250`。
 
-Status:
+## 9 月 4–5 日：Canonical OPD recovery
 
-Historical baseline branch.
+逐项确认 model、optimizer、scheduler、RNG、dataloader position 能通过 Verl 原生 checkpoint/resume 恢复。
 
----
+随后从 P1 checkpoint 继续到 P3。
 
-### `scripts/mtpatcher_v8/`
+这一步把“OPD 能不能完成 formal run”从工程问题变成可回答的科学问题。
 
-Approximate period:
+## 9 月 6–9 日：SeqKD parity 深挖，最后发现 RoPE evaluator bug
 
-2026-08-25
+经历 reduction、scheduler、order、optimizer、gradient、FSDP、microbatch 等诊断后，真正的关键来自一个矛盾：
 
-Main themes:
+> step400 权重 exact，但 greedy translation 大量不同。
 
-- PatchBoost
-- weighted correction NLL
+最后定位到 Transformers 新旧版本 RoPE config schema：
 
-Status:
+```text
+new checkpoint:
+rope_parameters.rope_theta = 1e6
 
-Historical method branch.
+old evaluator:
+未正确消费
+→ rope_theta = 1e4
+```
 
----
+只修 config 语义后：
 
-## Phase 5 — PatchBoost + OPD composition
+```text
+Formal SeqKD P1     18.5177
+Historical P1       18.5203
+delta               ≈ -0.0026
+```
 
-### `scripts/mtpatcher_v9/`
+因此旧的“大 BLEU gap 来自 trainer execution stack”解释被更新：主 gap 实际是 evaluator / config compatibility。
 
-Approximate period:
+## 9 月 9 日：Full OPD 重新评测后恢复
 
-2026-08-25 to 2026-08-27
+同样修 RoPE semantic 后：
 
-Main themes:
+```text
+OPD P1 18.3390
+OPD P2 18.6950
+OPD P3 19.1036
+```
 
-- PatchBoost followed by PGRKL
-- post-correction data construction
+P3 相对 Base `+1.7551`，与 Historical Full SeqKD `19.1652` 只差约 0.06。
 
-Status:
+从这时起，“OPD 整体无效”不再是合理主叙事。
 
-Historical composition experiment.
+## 9 月 9–10 日：低预算 OPD 与 K2 selection
 
----
+先得到：
 
-## Phase 6 — RQ2 selection experiments
+```text
+Selective OPD4960 = 17.9600
+```
 
-### `scripts/mtpatcher_v10/`
+它低于：
 
-Approximate period:
+```text
+Same-source SeqKD4960 = 18.4151
+```
 
-2026-08-25
+随后 Random OPD4960：
 
-Main themes:
+```text
+17.9861
+```
 
-- selection-based OPD
-- random3732 vs full6565
-- full6565 PGRKL
-- recovery/fix iterations
+最终：
 
-Status:
+```text
+Selective - Random = -0.0261
+```
 
-Historical RQ2 branch.
+K2 selection 没有为 OPD 提供额外价值。
 
----
+问题因此改写成：
 
-## Phase 7 — RQ3 PDS
+> static error-selected source 是否和 on-policy high-value state 对齐？
 
-### `scripts/mtpatcher_v11/`
+## 9 月 10 日：导师建议 Idiom / Chemistry
 
-Approximate period:
+导师建议直接在成语和化学术语上检查 WA knowledge，同时观察 OPD 训练过程。
 
-2026-08-25
+因此 targeted 分支启动。
 
-Main themes:
+它的定位是：
 
-- PDS job construction
-- Qwen3-8B PDS generation
-- repair and health checks
-- conservative PDS filtering
-- paper-budget PDS
-- PE + PDS training/evaluation
+```text
+WA / OPD knowledge-transfer mechanism diagnostic
+```
 
-Important naming note:
+不是整个项目的新名字。
 
-Some scripts inside this directory are named `v12` and `v13`.
-Those are experiment revisions inside the v11 directory; there are no separate
-`mtpatcher_v12/` or `mtpatcher_v13/` directories.
+## 9 月 10–11 日：Targeted SFT positive control
 
-Status:
+```text
+Chemistry +.164
+Idiom     +.519
+```
 
-Historical RQ3 PDS pipeline.
+说明这些 knowledge gap 对 Student 是可学习的，后续 OPD 弱不能再归因于 Student capacity、数据完全无效或 test 不敏感。
 
----
+## 9 月 11 日：Knowledge-conditioned OPD
 
-## Phase 8 — RQ3 WA
+```text
+Idiom     +.108
+Chemistry +.010
+```
 
-### `scripts/mtpatcher_v14/`
+真实迁移存在，但远小于 SFT。
 
-Approximate period:
+Train-set audit 又显示差距在 seen examples 上已经存在。
 
-2026-08-25
+## 9 月 11–12 日：A0 / A4 / A4b / A1
 
-Main themes:
+A0：延长 OPD 到 5 pass，Idiom 略增后饱和，Chemistry 基本不动。
 
-- WA anchor jobs
-- WA analog generation
-- WA context generation
-- repeated repair/salvage stages
-- authoritative merge
-- PE + PDS + WA training/evaluation
+A4：Teacher hint 改变 distribution 的位置与 OPD KL 显著重合，简单 dense-KL dilution 解释不成立。
 
-Status:
+A4b：semantic audit 找到 evaluator noise 和同义表达，但 OPD 的真实提升仍小。
 
-Historical RQ3 WA pipeline.
+A1：SFT 在 P1–P2 已拿到大部分最终 gain，说明知识本身容易被 direct sequence supervision 写入。
 
----
+## 9 月 12 日：当前状态
 
-## Parallel historical branches
+当前最有价值的机制问题已经收缩到：
 
-### `scripts/mtpatcher_rq0/`
+```text
+Student-generated prefix
+是否限制 soft Teacher knowledge 的有效迁移？
+```
 
-Teacher headroom, NewsCrawl scaling, SeqKD50k, and high-NLL data-selection
-experiments.
+下一实验：
 
-### `scripts/mtpatcher_paper_repro/`
+```text
+Prefix-Support Swap
+```
 
-Early paper-reproduction utilities.
+它先区分：
 
-### `scripts/mtpatcher_paper_faithful_v2/`
+```text
+prefix / trajectory support
+vs
+soft-KL objective / update
+```
 
-More faithful MT-PATCHER reproduction and patcher-quality experiments.
+然后才决定是否进入 local lexical bridge、PDS-OPD 或 OPD-aware selection。
 
----
+## 这条时间线怎么读
 
-## Current research generation
+旧结论如果和后期更强证据冲突，以后期为准。
 
-Current work no longer follows the `mtpatcher_vN` naming scheme.
+重要更新包括：
 
-Use:
+```text
+“OPD 可能整体无效”
+→ Full OPD 19.1036 后不再成立
 
-- `scripts/targeted/`
-- `scripts/data/`
-- `scripts/infra/`
-- `scripts/opd/`
-- `configs/`
-- `recipes/`
-- `manifests/`
+“SeqKD/OPD 低 BLEU 是 trainer execution gap”
+→ RoPE evaluator bug 关闭后修正
 
-Current scientific status is tracked in:
+“WA general BLEU≈0 所以 WA mechanism failed”
+→ 改为 targeted unseen-word mechanism unresolved
 
-`docs/research/02_experiment_registry.md`
+“K2 selected source 应该适合 OPD”
+→ Random vs Selective OPD4960 后缺乏支持
+```
 
-Current repository navigation is documented in:
-
-`docs/research/03_repository_map.md`
-
-## Policy going forward
-
-Do not create new directories such as:
-
-`mtpatcher_v15/`, `mtpatcher_v16/`, ...
-
-New work should be named by scientific role, for example:
-
-- `scripts/targeted/`
-- `scripts/opd/`
-- `scripts/pds/`
-- `scripts/eval/`
-- `scripts/diagnostics/`
-
-Historical numbered generations remain frozen in place for provenance.
+保留历史文件和 run，是为了让今天的结论能够追溯到它怎样被证据一步步修改出来。

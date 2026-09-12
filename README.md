@@ -1,146 +1,145 @@
-# MT-Patcher Reproduction / OPD Experiments
+# MT-PATCHER Reproduction / OPD Research
 
 ## 先看文件
 
-如果你只是想知道“现在做到哪了”，按这个顺序看：
+当前研究状态：
 
 ```text
-README.md
+docs/research/01_current_status.md
+```
+
+整个研究问题和各条线关系：
+
+```text
+docs/research/00_research_overview.md
+docs/research/01_research_overview.md
+```
+
+按实验顺序看我们做过什么、为什么做、得到什么：
+
+```text
 docs/research/02_experiments.md
-manifests/experiments/targeted/ARTIFACT_PATHS.md
-scripts/targeted/README.md
 ```
 
-如果你想找某个实验的数据、脚本、日志或结果文件：
+查实验登记、关键结果和对应目录：
 
 ```text
-manifests/experiments/targeted/ARTIFACT_PATHS.md
+docs/research/02_experiment_registry.md
 ```
 
-如果你想看仓库各目录分别放什么：
+看仓库结构和服务器数据 / run 在哪：
 
 ```text
 docs/research/03_repository_map.md
 ```
 
-如果你想看 targeted 这条线的具体实现代码：
+回顾从 8 月到现在的研究路线：
 
 ```text
+docs/research/04_historical_experiment_timeline.md
+```
+
+只查当前 targeted 机制实验：
+
+```text
+manifests/experiments/targeted/README.md
+manifests/experiments/targeted/ARTIFACT_PATHS.md
 scripts/targeted/README.md
 ```
 
-实验结果和大文件不放在 Git 仓库里，主要在：
+Ascend 环境、框架版本和版本管理：
 
 ```text
+README_ASCEND.md
+framework.lock.yaml
+VERSIONING.md
+```
+
+## 服务器上的主要位置
+
+```text
+仓库
+/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend
+
+数据
 /workspace/mtpatcher/data
-/workspace/mtpatcher/runs
+
+模型
 /workspace/mtpatcher/models
+
+训练与评测结果
+/workspace/mtpatcher/runs
+
+额外日志
 /workspace/mtpatcher/logs
 ```
 
----
-
-## 现在的主线
-
-目前主要在研究一个问题：
-
-> 当学生模型缺少某个明确的翻译知识时，On-Policy Distillation 能不能像 SFT 一样把这部分知识有效地教进去？
-
-为了把问题做得尽量可分析，当前主要看两个场景：
-
-- 化学术语；
-- 成语翻译。
-
-当前已经完成的实验链大致是：
+常用 run 目录：
 
 ```text
-C0 baseline
-→ SFT positive control
-→ knowledge-conditioned OPD
-→ train-set audit
-→ A0: horizon
-→ A4: KL signal localization
-→ A4b: semantic audit
-→ A1: SFT horizon
-→ next: Prefix-Support Swap
+/workspace/mtpatcher/runs/sft
+/workspace/mtpatcher/runs/opd
+/workspace/mtpatcher/runs/science
+/workspace/mtpatcher/runs/diagnostics
+/workspace/mtpatcher/runs/targeted
+/workspace/mtpatcher/runs/overnight
 ```
 
----
+## 当前研究版图
 
-## 当前最重要的结果
+| 部分 | 当前状态 | 最重要结论 |
+|---|---|---|
+| Strong Reproduction | 已有可靠基线 | PDS 有明确正效果；WA 在通用 MT 上无稳健增益 |
+| Full SeqKD / Full OPD | 基础结果已建立 | Full OPD 19.1036，接近 Full SeqKD 19.1652 |
+| 低预算 source selection | 当前 K2 路线不成立 | Selective OPD4960 17.9600，Random OPD4960 17.9861 |
+| Targeted knowledge transfer | 机制诊断已推进 | SFT 能快速学知识，OPD 只迁移其中一小部分 |
+| 下一步 | Prefix-Support Swap | 直接检查 Student prefix support 是否限制 soft-KL 迁移 |
 
-### 1. 这些知识本身是能学会的
+最常用的通用 MT 数字：
 
-SFT 正对照已经说明：
+```text
+Base                              17.3485
+K1All / PE                        17.5139
+Random SeqKD 4960                 18.2658
+Same-source SeqKD 4960            18.4151
+K1All + PDS                       18.5696
+Random OPD 4960                   17.9861
+Selective OPD 4960                17.9600
+Full OPD 20000                    19.1036
+Historical Full SeqKD 20000       19.1652
+```
 
-- Chemistry：C2 相比 C0 有明显提升；
-- Idiom：C1 / C3 也有明显提升。
+现在需要同时记住两件事：
 
-所以后面 OPD 效果弱，不能简单解释成“0.6B 学生模型学不会”。
+1. Full-budget OPD 已表现出很强的知识迁移能力，基本追平 Full SeqKD。
+2. 当前 K2 error selection 并没有让 OPD 在低 source budget 下更高效。
 
-### 2. 当前 OPD 只能吸收一小部分收益
+因此下一阶段的关键不再是继续缩 K2 budget，而是理解 **什么样的 source / state / prefix 才适合通过 OPD 传递 MT-PATCHER 找到的知识**。
 
-knowledge-conditioned OPD 的确有提升，但明显小于 SFT：
+## 仓库骨架
 
-- Idiom O1：约 `+0.108`
-- Chemistry O2：约 `+0.010`
+```text
+MT-Patcher-Reproduction-Ascend/
+├── configs/        # 正式实验配置
+├── recipes/        # 调用 Verl / 启动实验
+├── manifests/      # 实验版本、路径和来源记录
+├── scripts/        # 数据、训练、评测、诊断与历史实现
+├── docs/           # 给人看的研究与基础设施文档
+├── tests/
+├── patches/
+├── vendor/
+├── legacy/
+└── results/
+```
 
-而对应的 SFT 提升明显更大。
-
-### 3. 单纯延长训练没有解决问题
-
-A0 把 OPD 拉到 5 个 pass：
-
-- Idiom 有一些继续提升，但很快饱和；
-- Chemistry 仍然基本不动。
-
-### 4. KL 并没有完全“打偏”
-
-A4 发现，Teacher 词汇提示真正改变分布的位置，和 OPD KL 较大的位置有明显重合。
-
-这说明“有用信号全被无关 token 淹没”不是一个充分解释。
-
-### 5. 评测误差存在，但解释不了大差距
-
-A4b 用语义判断重新检查 Chemistry：
-
-- strict evaluator 的确会漏掉一部分合理同义表达；
-- 但修正后 OPD 的提升仍然很小；
-- SFT 的大幅提升仍然存在。
-
-### 6. SFT 学得非常快
-
-A1 进一步看 1–5 pass 的学习曲线：
-
-- Idiom：P1 已经拿到大部分收益，P2 基本接近最终结果；
-- Chemistry：P1 明显提升，P2 后基本饱和。
-
-因此“OPD 只是训练得不够久”已经不是主要解释。
-
----
-
-## 下一步
-
-下一步准备做 Prefix-Support Swap。
-
-核心问题很直接：
-
-> 如果保持相同的 soft-KL，只改变训练时所在的前缀轨迹，Teacher-supported prefix 是否会显著提高知识迁移效率？
-
-这个实验用来区分：
-
-- 问题主要出在 student 自己生成的轨迹支持；
-- 还是 soft-KL / update 本身就不够有效。
-
----
+`scripts/mtpatcher_v3` 到 `scripts/mtpatcher_v14` 是研究历史代际，不能直接当成今天的科学层级。新的正式实验优先进入 `configs/`、`recipes/`、`scripts/data|opd|eval|analysis|infra` 和 `manifests/`；旧路径保留用于追溯已有 run。
 
 ## 项目介绍
 
-这个仓库最早用于复现和改造 MT-PATCHER，并逐步加入 SeqKD、OPD、WA/PDS、targeted knowledge transfer 等实验。
+本项目研究 MT-PATCHER 的 selective / extendable knowledge distillation 与 On-Policy Distillation（OPD）之间的关系。
 
-现在仓库同时保留两部分内容：
+原始 MT-PATCHER 先定位 Student 真正不会的翻译知识，再通过 PE、PDS、WA 扩展并强化这些知识。当前工作进一步研究：能否把原来的 offline sequence distillation / SFT 式知识注入替换或扩展成 OPD，并在较小 source budget 下保持效果，同时减少 pipeline 复杂度。
 
-1. 早期复现、排错和框架实验；
-2. 当前围绕 targeted OPD 机制问题展开的新实验。
+目前最简洁的研究叙事是：
 
-旧代码和旧 run 仍然保留，主要用于复盘历史结果；新的实验尽量通过更明确的脚本、manifest 和结果目录来组织。
+> **MT-PATCHER 决定 WHAT to teach，OPD 决定 HOW to teach；真正的问题是怎样让两者在低预算下协同。**
