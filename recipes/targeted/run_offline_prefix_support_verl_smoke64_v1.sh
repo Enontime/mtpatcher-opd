@@ -266,7 +266,7 @@ compose_arm() {
 
     (
         cd "$arm_run"
-        python -m verl.trainer.main_ppo_v0 --cfg job "${OVS[@]}"
+        python "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/targeted/main_ppo_sync_wrapper_v1.py" --cfg job "${OVS[@]}"
     ) > "$arm_run/resolved_config.yaml"
 
     python - "$arm" "$arm_run/resolved_config.yaml" "$RUN/input_manifest.json" <<'PY'
@@ -567,7 +567,7 @@ run_arm() {
     (
         cd "$arm_run"
         export TENSORBOARD_DIR="$tb"
-        python -m verl.trainer.main_ppo_v0 "${OVS[@]}"
+        python "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/targeted/main_ppo_sync_wrapper_v1.py" "${OVS[@]}"
     ) > "$arm_run/train.log" 2>&1 &
     local pid=$!
     echo "$pid" > "$arm_run/main_ppo.pid"
