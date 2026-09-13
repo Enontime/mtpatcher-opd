@@ -1,0 +1,307 @@
+{
+  "chemistry_first_governance": {
+    "after_chemistry_result_forbidden_changes": [
+      "Idiom training protocol",
+      "Idiom primary endpoint",
+      "judge configuration",
+      "practical-effect threshold",
+      "seed rule"
+    ],
+    "only_exception": "demonstrated engineering bug with versioned repair provenance"
+  },
+  "claim_boundary": {
+    "G_arm": {
+      "launch_condition": "stable practical S/T effect after required seed confirmation",
+      "patterns": {
+        "G>>T≈S": "Teacher-generated trajectory quality may limit",
+        "T>>G≈S": "Teacher trajectory itself special",
+        "T≈G>>S": "supports Student-state limitation"
+      },
+      "status": "CONTINGENT_ONLY"
+    },
+    "allowed_from_ST": "teacher-supported trajectory replay improves targeted soft-KL transfer",
+    "forbidden_from_ST_alone": "Student-prefix support is the causal bottleneck",
+    "teacher_signal_role": "auxiliary disambiguation only; does not fully remove Teacher-conditional-distribution confound"
+  },
+  "engineering_smoke": {
+    "S": {
+      "aggregate_response_ids_sha256": "83231dd2da9eb018df0cc92de85a48a30c60ee01fab15149929555626481dccf",
+      "distillation_loss": 1.053262710571289,
+      "fresh_student_rollout_calls": 0,
+      "grad_norm": 19.39922332763672,
+      "teacher_top_k": 32
+    },
+    "T": {
+      "aggregate_response_ids_sha256": "266a562b8a373446ede0dd7015dbcdbdbf3ae3f9dd3fc1e98de712b213f683e3",
+      "distillation_loss": 0.9387006163597107,
+      "fresh_student_rollout_calls": 0,
+      "grad_norm": 15.499314308166504,
+      "teacher_top_k": 32
+    },
+    "run": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_replay_smoke64_native_verl_v5_20260913",
+    "state": {
+      "bytes": 244,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_replay_smoke64_native_verl_v5_20260913/state.json",
+      "sha256": "09cf8a746445dc0dcfb3a7c8f0798945ecdef2bdccaf5f7a6f65145f44c1bd41"
+    },
+    "status": "PASS_ENGINEERING_SMOKE_FORMAL_TRAINING_NOT_AUTHORIZED",
+    "summary": {
+      "bytes": 2423,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_replay_smoke64_native_verl_v5_20260913/summary.json",
+      "sha256": "7f7b1909e7b68d5e7cb67bdcb3b5dbb656fca1e7075c6b562511b0160681013e"
+    }
+  },
+  "evaluation_dataset": {
+    "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/targeted_diagnostic1000_v1_20260910",
+    "tree_sha256": "067f50b00d86854cefd0933bd12ad6afde04637bda02a1e9790fe6af8a2083df"
+  },
+  "experiment_id": "targeted_offline_prefix_support_replay_prereg_v2",
+  "formal_training_authorized": false,
+  "frozen_at_utc": "2026-09-13T07:34:29.809977+00:00",
+  "historical_on_policy_sanity": {
+    "O123_idiom_judge_summary": {
+      "bytes": 3645,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/idiom_deepseek_judge/summary.json",
+      "sha256": "4c5d9ba55ad8bad2aea92933b8c9c62738434e13b0ee8a52583a7b84db8255d7"
+    },
+    "O1_idiom_delta": 0.108,
+    "O2_chemistry_delta": 0.01,
+    "O2_targeted_translations": {
+      "bytes": 1187752,
+      "path": "/workspace/mtpatcher/runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O2/targeted_eval/targeted_diagnostic2000_translations.jsonl",
+      "sha256": "82d64500c54d89c7787a626c678fd65593fb83a546aa08e8834042a3a579298b"
+    },
+    "comparison": "frozen S replay vs historical O1/O2",
+    "if_materially_different": "restrict interpretation to offline frozen-support replay regime",
+    "not_selection_gate": true,
+    "required": true
+  },
+  "optimization_dose_logging": {
+    "parameter_update_norm": "offline checkpoint delta norm from same C0; do not patch Verl trainer core solely for this metric",
+    "per_pass": [
+      "loss_per_token",
+      "mean_grad_norm",
+      "effective_supervised_token_count",
+      "parameter_update_norm_l2"
+    ],
+    "tensorboard_required": true
+  },
+  "parent": {
+    "do_not_mutate_parent": true,
+    "manifest": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/manifests/experiments/targeted/08_offline_prefix_support_replay.json",
+    "manifest_sha256": "f9ba67c7da7f1b7fea324186401ff2fdf96200caf1e9b245a2b7ccd88d4dd621"
+  },
+  "population": {
+    "matched_budget": "m_i=min(len(Y_S_i),len(Y_T_i))",
+    "primary": "all frozen rows",
+    "secondary_event_covered": {
+      "chemistry": "canonical lexical event fully inside both S/T shared windows",
+      "idiom": "non-zero pre-update Teacher hint-gain signal inside both S/T shared windows; call signal-event-covered, not semantic-alignment-covered",
+      "materialize_before_training": true,
+      "may_filter_training_rows": false
+    },
+    "semantic_alignment_claim": false
+  },
+  "practical_effect": {
+    "absolute_equivalent": {
+      "chemistry_strict_accuracy": 0.0328,
+      "idiom_judge_score": 0.10380000000000003
+    },
+    "delta_R_min": 0.2,
+    "formula": "R=(M_arm-M_C0)/(M_SFT-M_C0)",
+    "historical_per_example_role": "uncertainty/power only; must not define threshold",
+    "metric": "recovery_ratio",
+    "requires_paired_bootstrap_95ci_excludes_zero": true,
+    "screen": "DeltaR=R_T-R_S"
+  },
+  "primary_endpoints": {
+    "chemistry": {
+      "C0": {
+        "artifact": {
+          "bytes": 844468,
+          "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910/c0_chemistry_diagnostic1000_scored.jsonl",
+          "sha256": "7d700965e63513a3a13a4584a36c84a032209287575558d00ee3090253be0c02"
+        },
+        "scorer_source": {
+          "bytes": 17470,
+          "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/targeted/run_c0_targeted_diagnostic.py",
+          "sha256": "f6e1d210f9760f4d31238efc71377122e28f367f8ff9cf0be8d1cf0e8f3e838b"
+        },
+        "value": 0.097
+      },
+      "SFT_ceiling_C2": {
+        "artifact": {
+          "bytes": 967832,
+          "path": "/workspace/mtpatcher/runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/c2_chemistry_diagnostic1000_scored.jsonl",
+          "sha256": "c40c5fc8b9dab9ff24817595dc33ed4416fa53ca28e51af9f01403c7981e4b8b"
+        },
+        "scorer_source": {
+          "bytes": 38123,
+          "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/targeted/targeted_sft_c123_pipeline.py",
+          "sha256": "8a33cb039f142546aa98b7fd620b1dee869946867ad935db312ee2944b60fd0d"
+        },
+        "value": 0.261
+      },
+      "other_secondary": [
+        "target-token probability/rank",
+        "Teacher lexical hint-signal"
+      ],
+      "primary": "canonical strict accuracy",
+      "reason": "deterministic/reproducible endpoint; legacy semantic judge rows do not expose system_prompt_sha256, so semantic audit is secondary",
+      "secondary_semantic_robustness": {
+        "C0": {
+          "eval_id_set_sha256": "b43f8f0626378810636dce1ba7f7d9a4cc768ebf39b5c798314b1e8dc27fc4e3",
+          "label": "chem_sem/C0",
+          "legacy_prompt_metadata_status": "NO_PER_ROW_SYSTEM_PROMPT_SHA256; frozen only as secondary robustness evidence",
+          "mean_score": 0.183,
+          "rows": 1000,
+          "subset_sha256": "7ad8bed0cce6036bc8895b531c697927dc071b8e28db843d5f171a102becfdc8",
+          "whole_file": {
+            "bytes": 2778319,
+            "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/deepseek_semantic_judge_full1000_v2/chem_semantic_full3000_judged.jsonl",
+            "sha256": "2e234ec41ee8b24827988b674478f6c15f63f87bfba635a41f57522f12c8435f"
+          }
+        },
+        "C2": {
+          "eval_id_set_sha256": "b43f8f0626378810636dce1ba7f7d9a4cc768ebf39b5c798314b1e8dc27fc4e3",
+          "label": "chem_sem/C2",
+          "legacy_prompt_metadata_status": "NO_PER_ROW_SYSTEM_PROMPT_SHA256; frozen only as secondary robustness evidence",
+          "mean_score": 0.509,
+          "rows": 1000,
+          "subset_sha256": "f0da8a815763a15c7018e85db36c787c612fb967ce3f8d5e06fba5ec13cc2baa",
+          "whole_file": {
+            "bytes": 2778319,
+            "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/deepseek_semantic_judge_full1000_v2/chem_semantic_full3000_judged.jsonl",
+            "sha256": "2e234ec41ee8b24827988b674478f6c15f63f87bfba635a41f57522f12c8435f"
+          }
+        },
+        "builder_source": {
+          "bytes": 14607,
+          "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/targeted/a4b_build_chem_semantic_audit_full1000_v2.py",
+          "sha256": "71f0f542393092353b03686a15b18cf9443a4f259f1e37037b53469fc81460b3"
+        },
+        "interpretation": "secondary evaluator-robustness analysis only; no claim that the legacy per-row artifact contains a reproducible prompt hash",
+        "judge_summary": {
+          "bytes": 113852,
+          "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/deepseek_semantic_judge_full1000_v2/summary.json",
+          "sha256": "e2dd23206899a48bd5ee6c4f2df4c690d2142244751b536d644edd6deec33728"
+        },
+        "run_manifest": {
+          "bytes": 1091,
+          "path": "/workspace/mtpatcher/runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912/manifest.json",
+          "sha256": "e24a0df6234832c3b11fea1d4b68e573eb7ace302a520f1950f79b65289bcf08"
+        }
+      }
+    },
+    "idiom": {
+      "C0": {
+        "eval_id_set_sha256": "73c78d88b9e75db38828e2029337440b51571436eb415a26ee42d48420246f48",
+        "heldout_content_set_sha256": "a30174dac7a4e6789c5ab5bf70a1ce4c4efe16e587efbbdf12bc289cd98eb1f8",
+        "judge_config": {
+          "config_sha256": "f159e8f9d83de9a9511467660efe6ed59a44371676e75a3fd7f3365acf4d7e90",
+          "judge_model": "deepseek-v4-flash",
+          "judge_temperature": 0,
+          "judge_thinking": "disabled",
+          "system_prompt_sha256": "aef333b76abf5aa55eaf09affacdbe931fb23087ab3f8f91845086b6021e389e"
+        },
+        "label": "idiom/C0",
+        "mean_score": 2.613,
+        "rows": 1000,
+        "subset_sha256": "cf1a2862e8691c43347fe24d4891f2c6cf130dcc4aeb243573c48ffa227664dc",
+        "whole_file": {
+          "bytes": 886767,
+          "path": "/workspace/mtpatcher/runs/targeted/c0_targeted_diagnostic1000_20260910/idiom_deepseek_judge/c0_idiom_diagnostic1000_judged.jsonl",
+          "sha256": "95ba2c633d4cc04a308692d1f7c9877cc43a9ed79c48d5dd27a42a3f345aab4d"
+        }
+      },
+      "SFT_ceiling_C1": {
+        "eval_id_set_sha256": "30ad560e2e29f3278daa66403d2a14b6a3e2cc93a8a8c3d9608eb15a1aaa40e2",
+        "heldout_content_set_sha256": "a30174dac7a4e6789c5ab5bf70a1ce4c4efe16e587efbbdf12bc289cd98eb1f8",
+        "judge_config": {
+          "config_sha256": "f159e8f9d83de9a9511467660efe6ed59a44371676e75a3fd7f3365acf4d7e90",
+          "judge_model": "deepseek-v4-flash",
+          "judge_temperature": 0,
+          "judge_thinking": "disabled",
+          "system_prompt_sha256": "aef333b76abf5aa55eaf09affacdbe931fb23087ab3f8f91845086b6021e389e"
+        },
+        "label": "idiom/C1",
+        "mean_score": 3.132,
+        "rows": 1000,
+        "subset_sha256": "bd190f8642cb8cf1a9b2b872dca51897e5a4445f95e9c317643c25feacac8a82",
+        "whole_file": {
+          "bytes": 2868110,
+          "path": "/workspace/mtpatcher/runs/targeted/wa_sft_positive_control_c123_20260910/idiom_deepseek_judge/c123_idiom_diagnostic3000_judged.jsonl",
+          "sha256": "ab2cc56b6bb065cfdab24b7a0ac16b50a501b0715efa3b15e16b27ebbf7461c1"
+        }
+      },
+      "judge_config": {
+        "config_sha256": "f159e8f9d83de9a9511467660efe6ed59a44371676e75a3fd7f3365acf4d7e90",
+        "judge_model": "deepseek-v4-flash",
+        "judge_temperature": 0,
+        "judge_thinking": "disabled",
+        "system_prompt_sha256": "aef333b76abf5aa55eaf09affacdbe931fb23087ab3f8f91845086b6021e389e"
+      },
+      "primary": "frozen external judge mean score",
+      "secondary": [
+        "Teacher matched-window hint-gain proxy",
+        "token/phrase diagnostics"
+      ]
+    }
+  },
+  "remaining_prelaunch_gate": "materialize/freeze full pre-update Teacher-signal artifacts + event-covered secondary subsets under this v2 definition; then Chemistry seed1 may launch without changing preregistration",
+  "schema_version": 2,
+  "scientific_class": "DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY",
+  "seed_policy": {
+    "negative_chemistry_claim": "requires >=2 independent training seeds; third if directions conflict",
+    "paired_bootstrap_scope": "example-sampling uncertainty only",
+    "positive_confirmation": "at least one independent seed; third if direction flips",
+    "positive_seed1": "DeltaR>=0.20 AND paired-bootstrap 95% CI excludes 0",
+    "seed1_null_semantics": "no practically meaningful effect observed that warrants positive confirmation",
+    "training_seed_uncertainty_separate": true
+  },
+  "status": "PREREG_V2_FROZEN_READY_FOR_PREUPDATE_SIGNAL_MATERIALIZATION",
+  "stop_budget": [
+    "Chemistry seed1",
+    "Idiom seed1",
+    "required confirmatory seed(s)",
+    "at most one contingent G-arm or bridge follow-up",
+    "then return to PDS/general-MT unless mechanism evidence is clear"
+  ],
+  "teacher_signal": {
+    "chemistry": {
+      "proxy": "delta_T_A=log q_T(y*|x,k,Y_A_<t)-log q_T(y*|x,Y_A_<t), A∈{S,T}",
+      "target": "canonical chemistry English-name token sequence"
+    },
+    "idiom": {
+      "boundary": "auxiliary distribution-level signal; S/T tokens need not be semantically aligned and this does not identify pure causality",
+      "external_judge_is_outcome_only": true,
+      "formula": "mean_{i,t<=m_i}[log q_T(y^A_it|x_i,k_i,Y^A_i,<t)-log q_T(y^A_it|x_i,Y^A_i,<t)]",
+      "proxy": "token-weighted Teacher hint-vs-no-hint log-prob gain on exact frozen matched-window replay tokens within each arm"
+    },
+    "interpretation": {
+      "T>>S_signal_T_stronger": "support/Teacher-target-quality confounded",
+      "T>>S_signal_comparable": "stronger support evidence, bounded claim only",
+      "T≈S_signal_strong": "inspect soft-KL/update efficiency",
+      "T≈S_signal_weak": "inspect Teacher supervision construction"
+    }
+  },
+  "title": "Offline Prefix-Support Replay — Reviewer-Grade Preregistration v2",
+  "training_contract": {
+    "dynamic_rollout_refresh": false,
+    "paired_ST_training_rng": true,
+    "passes": 3,
+    "same_C0": true,
+    "same_batch_grouping": true,
+    "same_hints": true,
+    "same_lr": true,
+    "same_matched_token_budget": true,
+    "same_optimizer": true,
+    "same_row_order": true,
+    "same_rows": true,
+    "same_teacher_topk32_forward_KL": true,
+    "same_temperature": true,
+    "same_update_count": true,
+    "student_only_updates": true,
+    "teacher_frozen": true
+  }
+}
