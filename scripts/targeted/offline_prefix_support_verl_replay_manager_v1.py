@@ -464,6 +464,18 @@ class OfflinePrefixSupportReplayManager(AgentLoopManager):
         for key, val in prompts.non_tensor_batch.items():
             non_tensor_batch[key] = np.array(val, copy=True)
 
+        # Match Verl AgentLoopManager._postprocess's text-only rollout contract.
+        multi_modal_inputs = np.empty(EXPECTED_ROWS, dtype=object)
+        multi_modal_inputs[:] = [{} for _ in range(EXPECTED_ROWS)]
+        non_tensor_batch["multi_modal_inputs"] = multi_modal_inputs
+
+        # Mirror the native manager's stable optional rollout fields.
+        for key in ("turn_scores", "tool_rewards", "min_global_steps", "max_global_steps", "extras"):
+            if key not in non_tensor_batch:
+                values = np.empty(EXPECTED_ROWS, dtype=object)
+                values[:] = [None] * EXPECTED_ROWS
+                non_tensor_batch[key] = values
+
         # The trainer expects generation timing metadata even though no generation happened.
         timing = {
             "agent_loop/num_preempted/min": 0.0,
