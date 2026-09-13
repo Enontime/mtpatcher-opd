@@ -1,0 +1,99 @@
+schema_version: 1
+name: offline_prefix_support_chemistry_st_seed1_native_verl_v1
+scientific_class: DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY
+status: FORMAL_CHEMISTRY_SEED1_AUTHORIZED_PENDING_RUN
+
+authorization_scope: Chemistry S/T seed1 under frozen prereg v2 only
+idiom_training_authorized: false
+domain: chemistry
+rows: 1000
+arms: [S, T]
+
+models:
+  student: /workspace/mtpatcher/models/Qwen3-0.6B
+  teacher: /workspace/mtpatcher/models/Qwen3-8B
+
+frozen_contract:
+  source_run: /workspace/mtpatcher/runs/targeted/offline_prefix_support_preupdate_signal1000_v2_20260913
+  pair_sha256: a7a78e0556933b642e21ac7b6f57392aebfb50077aff47850c78279dc448fe88
+  row_order_sha256: 49763f7a369c48e87befb1417927753f5e3c02d4ec81748540c6b0ca50bb95da
+  row_set_sha256: 92011d1090c65a99e1472b61e81a5ad5d5f3753e37c93d6538fc01f92eb23c8c
+  student_prefix_bank_sha256: e65180ae17971184fc84428a05dd42378aad68e9f0cf70b28b0f60062dee4e1c
+  teacher_prefix_bank_sha256: 297a504770abd9bd2e6cad8c986aa83bf6ffad3978c8d7d1207e40d591f06a74
+  matched_S_used_ids_sha256: 2e37662fb949a43004d9842eb68166c751b2fd97273e6dc408d4b911a7a12308
+  matched_T_used_ids_sha256: d68bff648787e93da34b550bb78b4e552c0c7bdff8f7b5db7138d36f215a87d1
+
+objective:
+  loss_mode: forward_kl_topk
+  teacher_topk: 32
+  temperature: 1.0
+  use_task_rewards: false
+  use_policy_gradient: false
+  actor_use_kl_loss: false
+  use_kl_in_reward: false
+  loss_agg_mode: token-mean
+
+optimization:
+  actor_lr: 1.0e-6
+  weight_decay: 0.01
+  lr_warmup_steps_ratio: 0.0
+  ppo_epochs: 1
+  training_seed: 20260820
+  train_batch_size: 40
+  ppo_mini_batch_size: 40
+  passes: 3
+  updates_per_pass: 25
+  total_updates: 75
+  save_freq: 25
+
+execution:
+  actor_gpus: 8
+  teacher_gpus: 4
+  rollout_tp: 2
+  teacher_tp: 2
+  teacher_dp: 1
+  dtype: bfloat16
+  max_prompt_length: 1024
+  max_response_length: 256
+  actor_use_remove_padding: true
+  actor_gradient_checkpointing: false
+  actor_torch_compile: false
+  actor_dynamic_bsz: true
+  actor_max_token_len_per_gpu: 4096
+  rollout_log_prob_dynamic_bsz: true
+  rollout_log_prob_micro_batch_size_per_gpu: 2
+  rollout_log_prob_max_token_len_per_gpu: 4096
+  rollout_gpu_memory_utilization: 0.35
+  teacher_gpu_memory_utilization: 0.40
+  enforce_eager: true
+
+replay_transport:
+  implementation: custom AgentLoopManager via validated synchronous native RayPPOTrainer extension point
+  dynamic_rollout_refresh: false
+  fresh_student_rollout_forbidden: true
+  native_teacher_topk: true
+  native_actor_update: true
+  exact_full_pass_replay_gate: true
+
+tensorboard:
+  required: true
+  logger: [console, tensorboard]
+  project_name: mtpatcher-prefix-replay-formal
+  per_arm_absolute_dir: true
+  pass_dose_summary_required: true
+
+checkpoints:
+  pass1_global_step: 25
+  pass2_global_step: 50
+  pass3_global_step: 75
+  preserve_all_three: true
+
+post_training_closure:
+  training_success_status: PASS_FORMAL_CHEMISTRY_ST_SEED1_TRAINING_PENDING_EVAL
+  remaining_before_scientific_screening:
+    - evaluate frozen Chemistry strict-accuracy endpoint on S/T checkpoints
+    - paired bootstrap over evaluation examples
+    - compute preregistered recovery-ratio effect versus C0 and C2 ceiling
+    - compute offline checkpoint parameter_update_norm_l2 from same C0 initialization
+  scientific_effect_claim_during_training: forbidden
+  idiom_auto_launch: forbidden
