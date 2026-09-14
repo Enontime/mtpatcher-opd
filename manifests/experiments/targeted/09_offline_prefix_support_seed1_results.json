@@ -1,0 +1,267 @@
+{
+  "artifacts": {
+    "chemistry_final_summary": {
+      "bytes": 9309,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_chemistry_seed1_posttrain_analysis_recovery_v2_20260913/final_summary.json",
+      "sha256": "b6842999b22132b742b29d168a6f6d5a3530083311408a543b24e8e5701889de"
+    },
+    "chemistry_score_table": {
+      "bytes": 321,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_chemistry_seed1_posttrain_analysis_recovery_v2_20260913/score_table.tsv",
+      "sha256": "35fba8389438017dcdf3dcf8efa6501aae1c7ce4ba8b0371219b9b6fd0754e82"
+    },
+    "chemistry_training_summary": {
+      "bytes": 7501,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/summary.json",
+      "sha256": "b077c2e74cba34d86c7295db11627ddd5b8e64d90f0d726d91a779f316c325be"
+    },
+    "idiom_final_summary": {
+      "bytes": 10976,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_seed1_posttrain_v1_20260914/final_summary.json",
+      "sha256": "e49cbc6cd7cc74ffdee97c9ae6bb10281109915fcdc8c32b048ef8a8532043e1"
+    },
+    "idiom_judge_summary": {
+      "bytes": 2207,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_seed1_posttrain_v1_20260914/idiom_deepseek_judge/summary.json",
+      "sha256": "c55b21fbed34e002676edf96351597616aa67aa9edddfb7fa2b166d795a9055d"
+    },
+    "idiom_judged_6000": {
+      "bytes": 6610354,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_seed1_posttrain_v1_20260914/idiom_deepseek_judge/idiom_ST_P123_diagnostic6000_judged.jsonl",
+      "sha256": "e0efe1bc9f36221d3d9775b24d663f239ca0f6d49615507801c94017aa9de955"
+    },
+    "idiom_score_table": {
+      "bytes": 399,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_seed1_posttrain_v1_20260914/score_table.tsv",
+      "sha256": "f1b7c8c8d30631672f096dd34b4ba2e84330a7c08866fdb7b428a654b2fa74c7"
+    },
+    "idiom_training_summary": {
+      "bytes": 8335,
+      "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/summary.json",
+      "sha256": "a3540766330b3e67d3732d334551c0c3333c494083adeb31f437d0b70ead2ddf"
+    },
+    "prereg_manifest": {
+      "bytes": 14668,
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/manifests/experiments/targeted/08_offline_prefix_support_replay_prereg_v2.json",
+      "sha256": "e3c7fbec42429b4e1ff2d945b7f5645f909dc3f36494947f1faccdba3e4e4fbb"
+    },
+    "spec_manifest": {
+      "bytes": 7232,
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/manifests/experiments/targeted/08_offline_prefix_support_replay.json",
+      "sha256": "f9ba67c7da7f1b7fea324186401ff2fdf96200caf1e9b245a2b7ccd88d4dd621"
+    }
+  },
+  "chemistry": {
+    "P3_decision": "NO_POSITIVE_SCREEN_OBSERVED_SEED1",
+    "anchors": {
+      "C0": 0.097,
+      "SFT_ceiling": 0.261,
+      "denominator": 0.164
+    },
+    "endpoint": "frozen strict accuracy",
+    "passes": {
+      "P1": {
+        "DeltaR": 0.006098,
+        "R_S": 0.109756,
+        "R_T": 0.115854,
+        "S": 0.115,
+        "T": 0.116,
+        "T_minus_S": 0.001,
+        "score_ci95": [
+          -0.007,
+          0.009
+        ],
+        "screen_pass": false
+      },
+      "P2": {
+        "DeltaR": -0.018293,
+        "R_S": 0.158537,
+        "R_T": 0.140244,
+        "S": 0.123,
+        "T": 0.12,
+        "T_minus_S": -0.003,
+        "score_ci95": [
+          -0.012,
+          0.006
+        ],
+        "screen_pass": false
+      },
+      "P3": {
+        "DeltaR": -0.054878,
+        "R_S": 0.22561,
+        "R_T": 0.170732,
+        "S": 0.134,
+        "T": 0.125,
+        "T_minus_S": -0.009,
+        "score_ci95": [
+          -0.018,
+          0.0
+        ],
+        "screen_pass": false
+      }
+    }
+  },
+  "cross_domain_interpretation": {
+    "forbidden_claim": "One seed per domain is insufficient to establish a negative mechanism claim or prove prefix support irrelevant.",
+    "next_research_priority": "Shift diagnostic budget toward where/how supervision is applied (critical-token/sparse or localized KL) and optimization efficiency before spending more on prefix-support confirmation seeds.",
+    "primary": "Teacher-supported replay did not produce a preregistered positive downstream advantage in either Chemistry or Idiom seed1.",
+    "weakened_explanation": "The evidence weakens the hypothesis that poor Student rollout trajectory/support is by itself the dominant bottleneck for targeted OPD transfer."
+  },
+  "decision_rule": {
+    "DeltaR_min": 0.2,
+    "P1_P2": "learning-curve/descriptive",
+    "P3": "final trained state",
+    "best_of_pass_forbidden": true,
+    "paired_bootstrap_ci_must_exclude_zero_positive": true
+  },
+  "experiment_id": "offline_prefix_support_replay_seed1_result_v1",
+  "frozen_at_utc": "2026-09-14T03:18:45.196969+00:00",
+  "idiom": {
+    "P3_decision": "NO_POSITIVE_SEED1_SCREEN",
+    "anchors": {
+      "C0": 2.613,
+      "SFT_ceiling": 3.132,
+      "denominator": 0.519
+    },
+    "endpoint": "frozen external DeepSeek judge mean",
+    "judge_contract": {
+      "config_sha256": "f159e8f9d83de9a9511467660efe6ed59a44371676e75a3fd7f3365acf4d7e90",
+      "model": "deepseek-v4-flash",
+      "resume_policy": {
+        "fatal_401_402_403_retry": 0,
+        "policy": "missing-only",
+        "probe_before_bulk": true,
+        "transient_retries_max": 2
+      },
+      "rows": 6000,
+      "system_prompt_sha256": "aef333b76abf5aa55eaf09affacdbe931fb23087ab3f8f91845086b6021e389e",
+      "temperature": 0,
+      "thinking": "disabled"
+    },
+    "passes": {
+      "P1": {
+        "DeltaR": 0.034682,
+        "DeltaR_ci95": [
+          -0.044316,
+          0.111753
+        ],
+        "R_S": 0.285164,
+        "R_T": 0.319846,
+        "S": 2.761,
+        "T": 2.779,
+        "T_minus_S": 0.018,
+        "score_ci95": [
+          -0.023,
+          0.058
+        ],
+        "screen_pass": false
+      },
+      "P2": {
+        "DeltaR": -0.050096,
+        "DeltaR_ci95": [
+          -0.142582,
+          0.042389
+        ],
+        "R_S": 0.499037,
+        "R_T": 0.44894,
+        "S": 2.872,
+        "T": 2.846,
+        "T_minus_S": -0.026,
+        "score_ci95": [
+          -0.074,
+          0.022
+        ],
+        "screen_pass": false
+      },
+      "P3": {
+        "DeltaR": -0.063584,
+        "DeltaR_ci95": [
+          -0.16185,
+          0.034682
+        ],
+        "R_S": 0.622351,
+        "R_T": 0.558767,
+        "S": 2.936,
+        "T": 2.903,
+        "T_minus_S": -0.033,
+        "score_ci95": [
+          -0.084,
+          0.018
+        ],
+        "screen_pass": false
+      }
+    }
+  },
+  "optimization_dose": {
+    "chemistry_optimizer_updates_per_arm": 75,
+    "idiom_P3_parameter_update_norm_l2": {
+      "S": 0.293354493606027,
+      "T": 0.2862233155355499
+    },
+    "idiom_effective_supervised_tokens_per_pass": 19789,
+    "idiom_optimizer_updates_per_arm": 75
+  },
+  "preupdate_confound": {
+    "claim_boundary": "T-prefix semantic/Teacher-signal strength is already higher pre-update, so T>S would not identify pure Student-prefix causality.",
+    "idiom_external_prefix_semantic": {
+      "S": 2.377,
+      "T": 4.232,
+      "T_minus_S": 1.855
+    },
+    "idiom_teacher_hint_gap_top32": {
+      "S": 0.8057311824727803,
+      "T": 0.8442005626200698,
+      "T_minus_S": 0.03846938014728951
+    }
+  },
+  "question": "Holding objective and matched training dose fixed, does frozen Teacher-supported replay materially outperform frozen Student-supported replay on targeted knowledge transfer?",
+  "repository": {
+    "branch": "infra/verl-ascend-parity",
+    "prereg_manifest": "manifests/experiments/targeted/08_offline_prefix_support_replay_prereg_v2.json",
+    "result_freeze_parent_head": "3c206c92bb46ace300f789f5972842cb38733e33",
+    "spec_manifest": "manifests/experiments/targeted/08_offline_prefix_support_replay.json"
+  },
+  "schema_version": 1,
+  "scientific_class": "DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY",
+  "seed_governance": {
+    "additional_prefix_support_seed_authorized_by_positive_screen": false,
+    "negative_mechanism_claim_authorized": false,
+    "positive_confirmation_seed_triggered": false
+  },
+  "status": "PASS_SEED1_CROSS_DOMAIN_NO_POSITIVE_SCREEN",
+  "tensorboard": {
+    "chemistry": {
+      "S": [
+        {
+          "bytes": 361174,
+          "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/S/tensorboard/events.out.tfevents.1789299480.8442009ba1f5.446390.0",
+          "sha256": "058ee73b07145971ed990573fb22dad5c86832239c6aa77dc15b55a24f20f76d"
+        }
+      ],
+      "T": [
+        {
+          "bytes": 361174,
+          "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/T/tensorboard/events.out.tfevents.1789300772.8442009ba1f5.516343.0",
+          "sha256": "6d1c051a6e6acaa3fcb036c40f33e2957c33b9e7528d592479a51b9be9455afe"
+        }
+      ]
+    },
+    "idiom": {
+      "S": [
+        {
+          "bytes": 361174,
+          "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/S/tensorboard/events.out.tfevents.1789317125.8442009ba1f5.653288.0",
+          "sha256": "8b4dc0277c18cdae47e8fff578260794260e43990bd0a5e644aa7a339e23886b"
+        }
+      ],
+      "T": [
+        {
+          "bytes": 361174,
+          "path": "/workspace/mtpatcher/runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/T/tensorboard/events.out.tfevents.1789318450.8442009ba1f5.722124.0",
+          "sha256": "08e978407c99b908a212b7c6b69834f2cb7a5dab22fb0c60953d712d6bd9164a"
+        }
+      ]
+    }
+  },
+  "title": "Offline Prefix-Support Replay — Chemistry + Idiom Seed1 Result"
+}

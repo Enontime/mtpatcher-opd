@@ -1122,3 +1122,17 @@ TensorBoard：无
 - Targeted SFT 能快速写入 Idiom/Chemistry knowledge；knowledge-conditioned OPD 能学到少量，但明显更弱。
 - A0/A4/A4b/A1 已排除“只需多训几轮”“lexical signal 被完全稀释”“纯 evaluator noise”等充分解释。
 - 下一项最高信息量实验是 Offline Prefix-Support Replay；spec 已冻结，训练尚未启动。
+
+<!-- OFFLINE_PREFIX_SUPPORT_SEED1_RESULT_V1 -->
+## E8. Offline Prefix-Support Replay — Seed1 Completed Result
+
+- **性质**：`DIAGNOSTIC ONLY / OFFLINE PREFIX-SUPPORT REPLAY`。
+- **状态**：`PASS / NO POSITIVE SEED1 SCREEN IN CHEMISTRY OR IDIOM`。
+- **结果 Manifest**：`manifests/experiments/targeted/09_offline_prefix_support_seed1_results.json`。
+- **结果说明**：`docs/research/06_offline_prefix_support_seed1_results.md`。
+- **Chemistry P3**：S `0.134`，T `0.125`，T-S `-0.009`，DeltaR `-0.054878`，positive screen = `False`。
+- **Idiom P3**：S `2.936`，T `2.903`，T-S `-0.033`，DeltaR `-0.063584`，95% CI `[-0.084, 0.018]`，positive screen = `False`。
+- **Pre-update caveat**：Idiom T-prefix semantic quality `4.232` vs S `2.377`; Teacher hint-gap T `0.8442` vs S `0.8057`。
+- **解释边界**：跨两个 domain 均未观察到 preregistered T-arm downstream advantage；这削弱“Student trajectory/support 单独构成主要瓶颈”的解释，但单 seed/domain 不足以形成负机制结论。
+- **Seed governance**：不触发 positive-confirmation seed；禁止 best-of-pass 选择。
+- **下一优先级**：监督位置/critical-token/sparse-or-localized KL 与 optimization efficiency。
