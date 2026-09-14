@@ -1,0 +1,34 @@
+--- /workspace/mtpatcher/runs/targeted/hint_masked_fkl_allmask_smoke_v2_20260914/losses.py.before	2026-09-14 10:16:08.885111800 +0000
++++ /workspace/mtpatcher/runs/targeted/hint_masked_fkl_allmask_smoke_v2_20260914/losses.py.after	2026-09-14 10:16:08.917111800 +0000
+@@ -252,6 +252,31 @@
+     response_mask = data["response_mask"]
+     loss_agg_mode = config.loss_agg_mode
+
++    # MTP_HINT_MASKED_FKL_WEIGHTS_V2
++    # Optional response-token weights. Keep response_mask unchanged so token-mean
++    # aggregation retains the full dense response-token denominator.
++    token_weights = data.get("distillation_token_weights", None)
++    if token_weights is not None:
++        if token_weights.is_nested:
++            token_weights = token_weights.to_padded_tensor(0.0)
++        if response_mask.is_nested:
++            response_mask_for_weights = response_mask.bool().to_padded_tensor(False)
++        else:
++            response_mask_for_weights = response_mask.bool()
++        assert token_weights.shape == distillation_losses.shape == response_mask_for_weights.shape
++        assert not token_weights.requires_grad, "distillation_token_weights must be detached"
++        assert torch.isfinite(token_weights).all(), "non-finite distillation_token_weights"
++        assert (token_weights >= 0).all(), "negative distillation_token_weights"
++        assert (token_weights[~response_mask_for_weights] == 0).all(), "padding weights must be zero"
++        token_weights = token_weights.detach().to(device=distillation_losses.device, dtype=distillation_losses.dtype)
++        valid_weights = token_weights[response_mask_for_weights]
++        dense_valid_losses = distillation_losses[response_mask_for_weights]
++        distillation_metrics["distillation/token_weight_selected_ratio"] = (valid_weights > 0).float().mean().item()
++        distillation_metrics["distillation/token_weight_mean"] = valid_weights.float().mean().item()
++        distillation_metrics["distillation/dense_loss_unweighted"] = dense_valid_losses.float().mean().item()
++        distillation_losses = distillation_losses * token_weights
++        distillation_metrics["distillation/masked_loss_full_denominator"] = distillation_losses[response_mask_for_weights].float().mean().item()
++
+     distillation_metrics.update(
+         compute_distillation_loss_range(distillation_losses=distillation_losses, response_mask=response_mask)
+     )
