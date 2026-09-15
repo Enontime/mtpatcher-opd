@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "name": "matched20k_v2_formal_protocol_v1",
+  "provenance": {
+    "project_implementation_commit_before_protocol": "83fe3e0c01e05e3d026da451331b82f624a8f051",
+    "verl_base_commit": "483b8a009ba3a97563edee3a19887e4862b8094a",
+    "verl_formal_commit": "ee2060725c3d5deff0d77ab4ffab4f30cd283dab",
+    "verl_patch_sha256": "75c52d1066310dfabefa080f1167a0eb3bd9c6cce82c11214e9930740fedf143",
+    "model_provenance_sha256": "778a647db450e2b7970c88629c8e4b7ab0506704de1f43276ddd9ef34c3e0382",
+    "canonical_seqkd_config_sha256": "066140eb59ac32f386164df2e3b8566e3b06dc3ffe2ed20e42c8de51b93784e7",
+    "canonical_opd_config_sha256": "654452eef623158d105d40b9f706196e8c899ada6b9347a34ebd5e0d71f71bae",
+    "formal_seqkd_config_sha256": "479b5c2ca9c16b8ff351f200796e1dad413503abcbfcee9a92a65adfba2484fc"
+  },
+  "data": {
+    "source_population_size": 20000,
+    "seqkd_matched120k": {
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/seqkd_matched120k.parquet",
+      "sha256": "ceeef7181d457e4dabcd8150d3a00d5a5ce4425a01706b1099f5ff6734ee37b9"
+    },
+    "opd_matched120k": {
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/opd_matched120k.parquet",
+      "sha256": "f12647a0a51eb8f54774a6621cb88917b59dffb9b1bff220c67cc1fd0468db08"
+    },
+    "source_order_manifest": {
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/source_order_manifest.jsonl",
+      "sha256": "2402e212c063a9cbd90edbdb78df05f5384b82e795eb36583906472e6ba05a7c"
+    },
+    "validation3231": {
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/validation3231.jsonl",
+      "sha256": "240374dc5c1423d57fb1e733d6acd403905fa75ba27e9c18fd0080dcd81de1dd"
+    }
+  },
+  "common_training_contract": {
+    "initial_student": "/workspace/mtpatcher/models/Qwen3-0.6B",
+    "global_batch_size": 16,
+    "max_optimizer_steps": 7500,
+    "source_exposures_at_max": 120000,
+    "schedule_passes": 6,
+    "steps_per_pass": 1250,
+    "exact_source_order_matched": true,
+    "one_optimizer_update_per_global_step": true,
+    "method_specific_optimizer_recipes_may_differ": true
+  },
+  "arms": {
+    "seqkd": {
+      "supervision": "offline sequence-distillation targets",
+      "formal_config": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/configs/sft/matched20k_v2_seqkd_formal_v1.yaml"
+    },
+    "opd": {
+      "supervision": "on-policy forward-KL top-k distillation",
+      "teacher": "/workspace/mtpatcher/models/Qwen3-8B",
+      "recipe_source": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/configs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b.yaml",
+      "targeted_hint_masked_fkl": false
+    }
+  },
+  "validation": {
+    "role": "model-selection validation; not untouched test",
+    "steps": {
+      "start": 0,
+      "interval": 100,
+      "end": 7500,
+      "count": 76
+    },
+    "datasets": [
+      "wmt24",
+      "flores",
+      "challenge"
+    ],
+    "primary_metric": "compare/benchmark/macro_bleu",
+    "macro_definition": "unweighted mean of dataset-level BLEU over WMT24, FLORES, Challenge",
+    "train_probe": "diagnostic only; excluded from model selection",
+    "generation": {
+      "do_sample": false,
+      "temperature": 0,
+      "top_k": -1,
+      "top_p": 1.0,
+      "validation_shuffle": false,
+      "full_determinism": true,
+      "seed": 42,
+      "enable_thinking": false
+    },
+    "implementation": "shared Verl V1 validator with validation_step_override metadata bridge"
+  },
+  "convergence_selection": {
+    "mode": "frozen retrospective convergence selection",
+    "training_execution": "both arms train uninterrupted to step 7500; validation is replayed from saved checkpoints",
+    "minimum_stop_step": 3750,
+    "significant_improvement_min_delta_bleu": 0.05,
+    "patience_evaluations": 10,
+    "patience_optimizer_steps": 1000,
+    "effective_stop_rule": "from step >=3750, first evaluated step s with s-last_significant_improvement_step >=1000; fallback 7500",
+    "significant_best_rule": "refresh last_significant_improvement_step when macro_bleu > prior_significant_best + 0.05",
+    "selected_checkpoint_rule": "highest raw macro_bleu at or before effective_stop_step; exact ties choose earlier step"
+  },
+  "artifact_contract": {
+    "checkpoint_interval": 100,
+    "retain_all_checkpoints": true,
+    "seqkd_checkpoint_contents": [
+      "model",
+      "optimizer",
+      "extra",
+      "hf_model"
+    ],
+    "formal_run_dirs_must_exclude": "smoke/debug/gate artifacts"
+  }
+}
