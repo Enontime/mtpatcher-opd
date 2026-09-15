@@ -1,0 +1,60 @@
+diff --git a/verl/trainer/main_ppo.py b/verl/trainer/main_ppo.py
+index 437787f..204a871 100644
+--- a/verl/trainer/main_ppo.py
++++ b/verl/trainer/main_ppo.py
+@@ -137,6 +137,18 @@ class TaskRunnerV1:
+ 
+         import transfer_queue as tq
+ 
++        # Optional project-side trainer registration hook.
++        # Default behavior is unchanged when the environment variable
++        # is absent.
++        import importlib
++        import os
++
++        custom_trainer_module = os.environ.get(
++            "VERL_CUSTOM_TRAINER_MODULE"
++        )
++        if custom_trainer_module:
++            importlib.import_module(custom_trainer_module)
++
+         from verl.trainer.ppo.v1 import get_trainer_cls
+ 
+         trainer_cls = get_trainer_cls(config.trainer.v1.trainer_mode)
+diff --git a/verl/trainer/sft_trainer.py b/verl/trainer/sft_trainer.py
+index 0c4aa8e..573e9d3 100644
+--- a/verl/trainer/sft_trainer.py
++++ b/verl/trainer/sft_trainer.py
+@@ -233,8 +233,17 @@ class SFTTrainer:
+         dp_rank = self.engine.get_data_parallel_rank()
+         dp_size = self.engine.get_data_parallel_size()
+ 
++        train_sampler_shuffle = self.config.data.get(
++            "train_sampler_shuffle",
++            True,
++        )
++
+         self.train_sampler = DistributedSampler(
+-            self.train_dataset, shuffle=True, num_replicas=dp_size, rank=dp_rank, drop_last=True
++            self.train_dataset,
++            shuffle=train_sampler_shuffle,
++            num_replicas=dp_size,
++            rank=dp_rank,
++            drop_last=True,
+         )
+ 
+         self.global_batch_size = config.data.train_batch_size
+diff --git a/verl/utils/device.py b/verl/utils/device.py
+index 33f0743..e1b9bed 100644
+--- a/verl/utils/device.py
++++ b/verl/utils/device.py
+@@ -182,6 +182,9 @@ def get_device_capability(device_id: int = 0) -> tuple[int | None, int | None]:
+     return get_platform().get_device_capability(device_id)
+ 
+ 
++from functools import lru_cache
++
++@lru_cache(maxsize=1)
+ def get_npu_versions() -> tuple[str, str]:
+     """Get the software version and CANN toolkit version for NPU devices.
+ 

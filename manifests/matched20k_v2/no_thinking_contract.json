@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "experiment": "matched20k_v2",
+  "teacher": {
+    "family": "Qwen3-8B",
+    "enable_thinking": false,
+    "supervision_semantics": "final translation only",
+    "reasoning_tokens_allowed_in_supervision": false
+  },
+  "student": {
+    "enable_thinking": false
+  },
+  "seqkd": {
+    "target": "teacher final translation only",
+    "teacher_reasoning_in_target": false,
+    "malformed_reasoning_policy": "fail_closed"
+  },
+  "opd": {
+    "teacher_prompt_enable_thinking": false,
+    "student_prompt_enable_thinking": false
+  },
+  "validation": {
+    "enable_thinking": false,
+    "do_sample": false
+  }
+}

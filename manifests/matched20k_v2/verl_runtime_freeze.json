@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "matched20k_v2 formal runtime",
+  "verl_base_commit": "483b8a009ba3a97563edee3a19887e4862b8094a",
+  "verl_formal_commit": "ee2060725c3d5deff0d77ab4ffab4f30cd283dab",
+  "formal_patch_sha256": "75c52d1066310dfabefa080f1167a0eb3bd9c6cce82c11214e9930740fedf143",
+  "included_changes": {
+    "verl/trainer/main_ppo.py": "optional project custom-trainer registration hook",
+    "verl/trainer/sft_trainer.py": "default-preserving configurable SFT sampler shuffle",
+    "verl/utils/device.py": "runtime-only cached NPU version query"
+  },
+  "explicitly_excluded_from_formal_runtime": {
+    "verl/trainer/distillation/losses.py": "targeted HINT-MASKED FKL optional token-weight patch",
+    "verl/trainer/ppo/v1/frozen_trajectory_probe.py": "diagnostic frozen-trajectory capture/replay probe",
+    "tensorboard_log/": "runtime artifact"
+  }
+}
