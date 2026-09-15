@@ -1,0 +1,510 @@
+{
+  "schema_version": 1,
+  "description": "Allowlist for the generated paper-facing MT-PATCHER view. Only final scientifically accepted assets belong here.",
+  "entries": [
+    {
+      "view": "analysis/kl_signal_localization/rowwise_token_signals.jsonl",
+      "target": "runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912/rowwise_token_signals.jsonl"
+    },
+    {
+      "view": "analysis/kl_signal_localization/summary.json",
+      "target": "runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912/summary.json"
+    },
+    {
+      "view": "analysis/kl_signal_localization/top100_hint_sensitive_tokens.jsonl",
+      "target": "runs/targeted/a4_kl_signal_localization_chemistry_v1_20260912/top100_hint_sensitive_tokens.jsonl"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/heldout/O1",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/heldout/O1"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/heldout/O2",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/heldout/O2"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/heldout/idiom_judge",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/heldout/idiom_deepseek_judge"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/heldout/summary.json",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/heldout/server_summary.json"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/O1",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/O1"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/O2",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/O2"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/chemistry_sample_manifest.json",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/chemistry_sample_manifest.json"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/idiom_judge",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/idiom_deepseek_judge"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/idiom_sample_manifest.json",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/idiom_sample_manifest.json"
+    },
+    {
+      "view": "analysis/opd_learning_curve_5pass/train_matched/summary.json",
+      "target": "runs/targeted/wa_opd_horizon5_o12_20260911/learning_curve/train_matched/a0_horizon5_final_summary_v1.json"
+    },
+    {
+      "view": "analysis/prefix_release/cases/baseline.jsonl",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/release_C0.jsonl"
+    },
+    {
+      "view": "analysis/prefix_release/cases/student_prefix_p3.jsonl",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/release_S_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_release/cases/teacher_prefix_p3.jsonl",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/release_T_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_release/event_plan/summary.json",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/event_plan_summary.json"
+    },
+    {
+      "view": "analysis/prefix_release/result_table.tsv",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/result_table.tsv"
+    },
+    {
+      "view": "analysis/prefix_release/summary.json",
+      "target": "runs/targeted/counterfactual_prefix_release_chemistry_v1_20260914/summary.json"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/input_manifest.json",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/input_manifest.json"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/student_prefix/postcheck.json",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/S/postcheck.json"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/student_prefix/replay_transport_rows.jsonl",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/S/replay_transport_rows.jsonl"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/student_prefix/resolved_config.yaml",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/S/resolved_config.yaml"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/summary.json",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/summary.json"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/teacher_prefix/postcheck.json",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/T/postcheck.json"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/teacher_prefix/replay_transport_rows.jsonl",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/T/replay_transport_rows.jsonl"
+    },
+    {
+      "view": "analysis/prefix_support/chemistry/teacher_prefix/resolved_config.yaml",
+      "target": "runs/targeted/offline_prefix_support_chemistry_st_seed1_native_verl_v3_20260913/chemistry/T/resolved_config.yaml"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/input_manifest.json",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/input_manifest.json"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/student_prefix/postcheck.json",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/S/postcheck.json"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/student_prefix/replay_transport_rows.jsonl",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/S/replay_transport_rows.jsonl"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/student_prefix/resolved_config.yaml",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/S/resolved_config.yaml"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/summary.json",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/summary.json"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/teacher_prefix/postcheck.json",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/T/postcheck.json"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/teacher_prefix/replay_transport_rows.jsonl",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/T/replay_transport_rows.jsonl"
+    },
+    {
+      "view": "analysis/prefix_support/idiom/teacher_prefix/resolved_config.yaml",
+      "target": "runs/targeted/offline_prefix_support_idiom_st_seed1_native_verl_v1_20260913/idiom/T/resolved_config.yaml"
+    },
+    {
+      "view": "analysis/prefix_uptake/result_table.tsv",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/result_table.tsv"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_S_C0.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_S_C0.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_S_S_P3.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_S_S_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_S_T_P3.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_S_T_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_T_C0.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_T_C0.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_T_S_P3.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_T_S_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/rowwise/rowwise_T_T_P3.jsonl",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/rowwise_T_T_P3.jsonl"
+    },
+    {
+      "view": "analysis/prefix_uptake/summary.json",
+      "target": "runs/targeted/cross_prefix_uptake_audit_chemistry_v1_20260914/summary.json"
+    },
+    {
+      "view": "analysis/semantic_robustness",
+      "target": "runs/targeted/a4b_chem_semantic_audit_full1000_v2_20260912"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C1/general_eval",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C1/general_eval"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C1/summary.json",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C1/summary.json"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C1/targeted_eval",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C1/targeted_eval"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C2/general_eval",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C2/general_eval"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C2/summary.json",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C2/summary.json"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/C2/targeted_eval",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/C2/targeted_eval"
+    },
+    {
+      "view": "analysis/sft_learning_curve_5pass/idiom_judge",
+      "target": "runs/targeted/a1_sft_horizon5_c12_v3_20260912/idiom_deepseek_judge"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_0001_1250/checkpoints",
+      "target": "runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058/checkpoints"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_0001_1250/experiment_config.yaml",
+      "target": "runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058/experiment_config.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_0001_1250/resolved_config.yaml",
+      "target": "runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058/resolved_config.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_0001_1250/science_provenance.txt",
+      "target": "runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058/runtime_science_provenance_v1.txt"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_0001_1250/train.log",
+      "target": "runs/opd/canonical_fkl_topk_broad20k_qwen3_06b_8b_20260903_034058/train.log"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_1251_3750/canonical_config.yaml",
+      "target": "runs/opd/opd_recovery_20260905_v2/canonical_config_snapshot.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_1251_3750/checkpoints",
+      "target": "runs/opd/opd_recovery_20260905_v2/checkpoints"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_1251_3750/provenance.sha256",
+      "target": "runs/opd/opd_recovery_20260905_v2/recovery_provenance.sha256"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_1251_3750/resolved_config.yaml",
+      "target": "runs/opd/opd_recovery_20260905_v2/resolved_config.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/opd_full_20k/steps_1251_3750/train.log",
+      "target": "runs/opd/opd_recovery_20260905_v2/train.log"
+    },
+    {
+      "view": "experiments/00_foundation/seqkd_full_20k/checkpoints",
+      "target": "runs/sft/canonical_seqkd_broad20k_qwen3_06b_8b_20260903_133457/checkpoints"
+    },
+    {
+      "view": "experiments/00_foundation/seqkd_full_20k/experiment_config.yaml",
+      "target": "runs/sft/canonical_seqkd_broad20k_qwen3_06b_8b_20260903_133457/experiment_config.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/seqkd_full_20k/resolved_config.yaml",
+      "target": "runs/sft/canonical_seqkd_broad20k_qwen3_06b_8b_20260903_133457/resolved_config.yaml"
+    },
+    {
+      "view": "experiments/00_foundation/seqkd_full_20k/train.log",
+      "target": "runs/sft/canonical_seqkd_broad20k_qwen3_06b_8b_20260903_133457/train.log"
+    },
+    {
+      "view": "experiments/01_mtpatcher/pds_augmented_68917",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_pds_student2_v2/K1ALL_PDS"
+    },
+    {
+      "view": "experiments/01_mtpatcher/pds_parent_repeat_control_68917",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_pds_student2_v2/K1_PARENT_MATCHED_REPEAT"
+    },
+    {
+      "view": "experiments/01_mtpatcher/pe_all_11792",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_student6_v1/K1_ALL_PE11792"
+    },
+    {
+      "view": "experiments/01_mtpatcher/wa_general_mt_seed1",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_pe_pds_wa_full_v1"
+    },
+    {
+      "view": "experiments/01_mtpatcher/wa_general_mt_seed2/with_wa",
+      "target": "runs/mtpatcher_v3_full6565_20260823/wa_paired_seed2_v1/PE_PDS_WA"
+    },
+    {
+      "view": "experiments/01_mtpatcher/wa_general_mt_seed2/without_wa",
+      "target": "runs/mtpatcher_v3_full6565_20260823/wa_paired_seed2_v1/PE_PDS"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_random_4960/checkpoints",
+      "target": "runs/opd/random_opd_4960_20260909_223550/checkpoints"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_random_4960/experiment_config.yaml",
+      "target": "runs/opd/random_opd_4960_20260909_223550/experiment_config.yaml"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_random_4960/resolved_config.yaml",
+      "target": "runs/opd/random_opd_4960_20260909_223550/resolved_config.yaml"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_random_4960/train.log",
+      "target": "runs/opd/random_opd_4960_20260909_223550/train.log"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_selective_k2_4960/checkpoints",
+      "target": "runs/opd/selective_opd_k2_4960_20260909_172516/checkpoints"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_selective_k2_4960/experiment_config.yaml",
+      "target": "runs/opd/selective_opd_k2_4960_20260909_172516/experiment_config.yaml"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_selective_k2_4960/resolved_config.yaml",
+      "target": "runs/opd/selective_opd_k2_4960_20260909_172516/resolved_config.yaml"
+    },
+    {
+      "view": "experiments/02_data_efficiency/opd_selective_k2_4960/train.log",
+      "target": "runs/opd/selective_opd_k2_4960_20260909_172516/train.log"
+    },
+    {
+      "view": "experiments/02_data_efficiency/seqkd_random_4960",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_student6_v1/RANDOM_SEQKD4960"
+    },
+    {
+      "view": "experiments/02_data_efficiency/seqkd_same_sources_4960",
+      "target": "runs/mtpatcher_v3_full6565_20260823/strong_repro_student6_v1/SAME_SOURCE_SEQKD4960"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O1/chemistry_summary.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O1/targeted_eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O1/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O1/targeted_eval/o1_idiom1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O1/training_manifest.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O1/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O1/translations.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O1/targeted_eval/targeted_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O2/chemistry_summary.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O2/targeted_eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O2/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O2/targeted_eval/o2_idiom1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O2/training_manifest.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O2/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O2/translations.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O2/targeted_eval/targeted_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O3/chemistry_summary.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O3/targeted_eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O3/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O3/targeted_eval/o3_idiom1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O3/training_manifest.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O3/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/O3/translations.jsonl",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/O3/targeted_eval/targeted_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/general_bleu/opd",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/general_bleu_opd"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/general_bleu/sft_control",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/general_bleu_sft"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/idiom_judge",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/idiom_deepseek_judge"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/input_provenance.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/frozen_input_provenance.json"
+    },
+    {
+      "view": "experiments/03_targeted/opd_knowledge_conditioned_o1_o2_o3/summary.json",
+      "target": "runs/targeted/wa_opd_knowledge_conditioned_o123_20260911/final_server_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/chemistry_scored.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/eval/c1_chemistry_diagnostic1000_scored.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/chemistry_summary.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/eval_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/eval/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/eval/c1_idiom_diagnostic1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/training_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C1/translations.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C1/eval/c1_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/chemistry_scored.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/c2_chemistry_diagnostic1000_scored.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/chemistry_summary.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/eval_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/c2_idiom_diagnostic1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/training_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C2/translations.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C2/eval/c2_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/chemistry_scored.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/eval/c3_chemistry_diagnostic1000_scored.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/chemistry_summary.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/eval/chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/eval_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/eval/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/idiom_judge_input.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/eval/c3_idiom_diagnostic1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/training_manifest.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/train/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/C3/translations.jsonl",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/C3/eval/c3_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/chemistry_comparison.json",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/chemistry_c0_c123_comparison.json"
+    },
+    {
+      "view": "experiments/03_targeted/sft_positive_control_c1_c2_c3/idiom_judge",
+      "target": "runs/targeted/wa_sft_positive_control_c123_20260910/idiom_deepseek_judge"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/chemistry_scored.jsonl",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/c0_chemistry_diagnostic1000_scored.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/chemistry_summary.json",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/c0_chemistry_summary.json"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/idiom_judge_input.jsonl",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/c0_idiom_diagnostic1000_for_judge.jsonl"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/idiom_judged",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/idiom_deepseek_judge"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/manifest.json",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/manifest.json"
+    },
+    {
+      "view": "experiments/03_targeted/targeted_baseline/translations.jsonl",
+      "target": "runs/targeted/c0_targeted_diagnostic1000_20260910/c0_targeted_diagnostic2000_translations.jsonl"
+    },
+    {
+      "view": "tensorboard/opd_full_20k/steps_1251_3750",
+      "target": "runs/science/paper_tensorboard_clean_20260915/opd_full_20k/steps_1251_3750"
+    },
+    {
+      "view": "tensorboard/seqkd_full_20k",
+      "target": "runs/science/paper_tensorboard_clean_20260915/seqkd_full_20k"
+    }
+  ]
+}

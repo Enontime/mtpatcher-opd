@@ -367,3 +367,19 @@ docs/research/04_historical_experiment_timeline.md
 ```text
 docs/research/02_experiments.md
 ```
+
+<!-- AGENT_RULES_POINTER_V1 -->
+
+## 项目长期规则
+
+继续本项目之前，必须依次阅读仓库根目录：
+
+1. `AGENT4.md`
+2. `AGENT3.md`
+3. `AGENTS.md`
+
+论文级资产由以下文件控制：
+
+`manifests/paper_view.json`
+
+`/workspace/mtpatcher/paper_view` 为自动生成视图，禁止手工修改。
