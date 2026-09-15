@@ -253,30 +253,14 @@ def check_tree(root, entries, allow_missing_marker=False):
 
 
 def write_generated_metadata(root):
-    readme = root / "README.md"
+    readme_source = REPO / "manifests/paper_view_README.md"
 
-    readme.write_text(
-        """# MT-PATCHER Paper View
+    if not readme_source.is_file():
+        die(f"paper-view README missing: {readme_source}")
 
-GENERATED DIRECTORY — DO NOT EDIT MANUALLY.
-
-Source of truth:
-
-    repo/MT-Patcher-Reproduction-Ascend/manifests/paper_view.json
-
-Regenerate:
-
-    python scripts/tools/sync_paper_view.py --apply
-
-Verify:
-
-    python scripts/tools/sync_paper_view.py --check
-
-This view exposes only paper-facing final experiment assets.
-Development, smoke, failed attempts, debug runs, closure experiments,
-preflight runs, demos, and superseded versions stay outside this view.
-""",
-        encoding="utf-8",
+    shutil.copyfile(
+        readme_source,
+        root / "README.md",
     )
 
     marker = {
