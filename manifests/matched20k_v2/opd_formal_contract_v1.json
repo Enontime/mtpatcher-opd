@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "name": "matched20k_v2_opd_formal_v1",
+  "parent_protocol": "formal_protocol_v1.json",
+  "canonical_opd_config_sha256": "654452eef623158d105d40b9f706196e8c899ada6b9347a34ebd5e0d71f71bae",
+  "formal_opd_config_sha256": "cfb0b7850d9401628fdd0e4aff095a7953fc62d776de52e73aba89b0c0292c03",
+  "derivation_policy": {
+    "scientific_hyperparameters_changed": false,
+    "allowed_execution_changes": [
+      "training population -> matched120k",
+      "materialized dataset traversals -> 1",
+      "max optimizer steps -> 7500",
+      "checkpoint interval -> 100",
+      "formal output path/name",
+      "retain all actor checkpoints"
+    ]
+  },
+  "frozen_scientific_recipe": {
+    "student": "Qwen3-0.6B",
+    "teacher": "Qwen3-8B",
+    "loss_mode": "forward_kl_topk",
+    "teacher_topk": 32,
+    "actor_lr": 1e-06,
+    "ppo_epochs": 1,
+    "rollout_temperature": 1.0,
+    "rollout_top_p": 1.0,
+    "rollout_top_k": -1,
+    "enable_thinking": false
+  },
+  "matched_budget": {
+    "population": 20000,
+    "source_exposures": 120000,
+    "original_source_passes": 6,
+    "global_batch_size": 16,
+    "optimizer_steps": 7500
+  }
+}
