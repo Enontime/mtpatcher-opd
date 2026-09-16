@@ -353,3 +353,224 @@ class Matched20kPPOTrainerSync(PPOTrainerSync):
         metrics.update(mt_metrics)
 
         return metrics
+
+
+@register_trainer("matched20k_persistent_replay")
+class Matched20kPersistentReplayTrainer(
+    Matched20kPPOTrainerSync
+):
+    """
+    Post-hoc matched20k checkpoint validation with one persistent
+    Verl/Ray/rollout lifecycle.
+
+    All generation, checkpoint loading, weight synchronization,
+    validation, and logging remain Verl-native.
+
+    Project-side responsibility is limited to:
+      1. enumerating frozen checkpoint steps;
+      2. asking Verl to load each actor checkpoint;
+      3. invoking the existing native validation path.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        root = os.environ.get(
+            "MATCHED20K_REPLAY_CHECKPOINT_ROOT"
+        )
+        raw_steps = os.environ.get(
+            "MATCHED20K_REPLAY_STEPS"
+        )
+
+        if not root:
+            raise RuntimeError(
+                "MATCHED20K_REPLAY_CHECKPOINT_ROOT is required"
+            )
+
+        if not raw_steps:
+            raise RuntimeError(
+                "MATCHED20K_REPLAY_STEPS is required"
+            )
+
+        self._replay_checkpoint_root = Path(root)
+
+        if not self._replay_checkpoint_root.is_dir():
+            raise FileNotFoundError(
+                self._replay_checkpoint_root
+            )
+
+        try:
+            steps = [
+                int(x.strip())
+                for x in raw_steps.split(",")
+                if x.strip()
+            ]
+        except ValueError as exc:
+            raise RuntimeError(
+                "MATCHED20K_REPLAY_STEPS must be "
+                "comma-separated integers"
+            ) from exc
+
+        if not steps:
+            raise RuntimeError(
+                "persistent replay step list is empty"
+            )
+
+        if any(step <= 0 for step in steps):
+            raise RuntimeError(
+                "persistent replay steps must be > 0; "
+                "step 0 is evaluated from the initial model"
+            )
+
+        if steps != sorted(set(steps)):
+            raise RuntimeError(
+                "persistent replay steps must be strictly "
+                "increasing and unique"
+            )
+
+        self._replay_steps = steps
+        self._defer_dump_executor_shutdown = False
+
+        self._validate_persistent_replay_contract()
+
+    def _validate_persistent_replay_contract(self):
+        trainer = self.config.trainer
+
+        if not trainer.get("val_only", False):
+            raise RuntimeError(
+                "persistent replay requires trainer.val_only=true"
+            )
+
+        if not trainer.get("val_before_train", True):
+            raise RuntimeError(
+                "persistent replay requires "
+                "trainer.val_before_train=true"
+            )
+
+        if trainer.get(
+            "resume_mode",
+            "disable",
+        ) != "disable":
+            raise RuntimeError(
+                "persistent replay requires "
+                "trainer.resume_mode=disable"
+            )
+
+        raw_step = trainer.get(
+            "validation_step_override",
+            0,
+        )
+
+        if int(raw_step) != 0:
+            raise RuntimeError(
+                "persistent replay initial validation "
+                "must be labeled step 0"
+            )
+
+        if bool(self.config.distillation.enabled):
+            raise RuntimeError(
+                "persistent validation must run with "
+                "distillation.enabled=false"
+            )
+
+        for step in self._replay_steps:
+            actor_dir = (
+                self._replay_checkpoint_root
+                / f"global_step_{step}"
+                / "actor"
+            )
+
+            if not actor_dir.is_dir():
+                raise FileNotFoundError(actor_dir)
+
+            model_shards = list(
+                actor_dir.glob(
+                    "model_world_size_*_rank_*.pt"
+                )
+            )
+
+            if not model_shards:
+                raise RuntimeError(
+                    f"no native model shards in {actor_dir}"
+                )
+
+    def _shutdown_dump_executor(self):
+        """
+        Verl's val-only fit normally closes its dump executor
+        immediately after the first validation.
+
+        Persistent replay deliberately keeps it alive until all
+        checkpoint validations have completed.
+        """
+        if self._defer_dump_executor_shutdown:
+            return
+
+        return super()._shutdown_dump_executor()
+
+    def fit(self, agent_loop_manager):
+        self._defer_dump_executor_shutdown = True
+
+        try:
+            # Native Verl val-only path:
+            #   * initializes logger / agent loop / replay state;
+            #   * validates the initial Student at step 0;
+            #   * returns without any optimizer update.
+            super().fit(agent_loop_manager)
+
+            for step in self._replay_steps:
+                actor_dir = (
+                    self._replay_checkpoint_root
+                    / f"global_step_{step}"
+                    / "actor"
+                )
+
+                print(
+                    "MATCHED20K_PERSISTENT_REPLAY_LOAD "
+                    f"step={step} "
+                    f"actor_dir={actor_dir}",
+                    flush=True,
+                )
+
+                # Rollout currently contains the previous checkpoint.
+                # Release its weights/KV state before replacing the
+                # colocated actor weights.
+                self.checkpoint_manager.sleep_replicas()
+
+                # Native Verl FSDP checkpoint load.
+                self.actor_rollout_wg.load_checkpoint(
+                    local_path=str(actor_dir),
+                    del_local_after_load=False,
+                )
+
+                self.global_steps = step
+
+                # Native Verl actor -> rollout weight synchronization.
+                self.checkpoint_manager.update_weights(
+                    self.global_steps
+                )
+
+                self.on_validate_begin()
+                metrics = self._validate()
+                self.on_validate_end()
+
+                if not metrics:
+                    raise RuntimeError(
+                        f"empty validation metrics at step {step}"
+                    )
+
+                # Same native Tracking logger and step semantics used
+                # by ordinary Verl validation.
+                self.logger.log(
+                    data=metrics,
+                    step=self.global_steps,
+                )
+
+                print(
+                    "MATCHED20K_PERSISTENT_REPLAY_STEP "
+                    f"{step}=PASS",
+                    flush=True,
+                )
+
+        finally:
+            self._defer_dump_executor_shutdown = False
+            super()._shutdown_dump_executor()
