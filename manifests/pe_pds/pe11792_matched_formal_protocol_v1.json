@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "experiment": "pe11792_matched_fresh_v1",
+  "classification": "LAB_REPRODUCTION_PAPER_ALIGNED_ADAPTATION",
+  "scientific_question": "On the identical PE-selected source trajectory, compare fixed K1 post-edit response-only SFT against Qwen3-8B on-policy forward-KL distillation.",
+  "arms": {
+    "pe_sft": {
+      "student": "Qwen3-0.6B",
+      "supervision": "frozen K1 conservative post_edit",
+      "objective": "response-only cross entropy"
+    },
+    "pe_opd": {
+      "student": "Qwen3-0.6B",
+      "teacher": "Qwen3-8B",
+      "supervision": "teacher distribution on current student on-policy continuation",
+      "objective": "forward_kl_topk",
+      "teacher_topk": 32,
+      "uses_pe_post_edit": false,
+      "uses_feedback_errors_or_corrections": false,
+      "pe_role": "source selection only"
+    }
+  },
+  "matching": {
+    "comparison_type": "SAMPLE_EXPOSURE_MATCHED",
+    "compute_matched": false,
+    "unique_sources": 11792,
+    "source_passes": 6,
+    "global_batch_size": 16,
+    "source_exposures": 70752,
+    "optimizer_steps": 4422,
+    "same_materialized_source_order": true,
+    "same_base_student": true,
+    "same_tokenizer": true,
+    "same_validation": true,
+    "runtime_actual_consumption_equality": "REQUIRED_CLOSURE_AUDIT_NOT_YET_CLAIMED"
+  },
+  "selection": {
+    "primary_endpoint_step": 4422,
+    "primary_metric": "benchmark_macro_bleu",
+    "secondary_metrics": [
+      "benchmark_macro_chrf",
+      "wmt24_bleu",
+      "wmt24_chrf",
+      "flores_bleu",
+      "flores_chrf",
+      "challenge_bleu",
+      "challenge_chrf"
+    ],
+    "retrospective_best": "DIAGNOSTIC_ONLY",
+    "early_stopping": false
+  },
+  "validation_steps": [
+    0,100,200,300,400,500,600,700,800,900,
+    1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,
+    2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,
+    3000,3100,3200,3300,3400,3500,3600,3700,3800,3900,
+    4000,4100,4200,4300,4400,4422
+  ],
+  "hyperparameter_policy": "inherit matched20k_v2 formal settings; no PE-result-informed tuning"
+}
