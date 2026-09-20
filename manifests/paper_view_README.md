@@ -29,16 +29,37 @@
 
 ### Foundation
 
-`experiments/00_foundation/` 保存 Full SeqKD 与 Full OPD。
+`experiments/00_foundation/` 保存 Full SeqKD 与 Full OPD 的基础对照。
 
-Full OPD 的历史训练由两个连续阶段组成：
+当前正式对照为 `matched20k_v2_7500`：
 
-```text
-steps_0001_1250
-steps_1251_3750
-```
+| 项目 | 设置 |
+|---|---:|
+| Unique training sources | 20,000 |
+| Source passes | 6 |
+| Total source exposures | 120,000 |
+| Global batch size | 16 |
+| Formal optimizer steps | 7,500 |
 
-两部分共同构成完整的 3750-step 训练过程。
+SeqKD 和 OPD 使用相同的 source population、source order 和 source exposure budget。
+
+7500-step 正式结果：
+
+| Method | WMT24 BLEU | FLORES BLEU | Challenge BLEU | Macro BLEU | Macro chrF |
+|---|---:|---:|---:|---:|---:|
+| Full SeqKD | 17.175 | 21.762 | 19.302 | 19.413 | 49.879 |
+| Full OPD | 17.225 | 22.539 | 19.727 | 19.830 | 50.260 |
+
+因此正式 matched endpoint 下，Full OPD 相比 Full SeqKD：
+
+- Macro BLEU: `+0.417`
+- Macro chrF: `+0.381`
+
+训练曲线显示 SeqKD 前期提升更快，OPD 后期追上。
+
+另外将 OPD 从 7500 延长到 10000 steps 做了训练充分性诊断。
+该实验标记为 `DIAGNOSTIC_BUDGET_EXTENSION`，不改变正式 7500-step endpoint。
+在 extension 中 Teacher-probe 继续明显提高，而 benchmark 已进入平台和振荡区。
 
 ### MT-PATCHER
 
