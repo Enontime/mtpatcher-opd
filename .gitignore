@@ -1,4 +1,5 @@
 # Secrets and local credentials
+/ssh
 .env
 .env.*
 !.env.example
@@ -20,6 +21,7 @@ secrets*.local.*
 !secrets.example.json
 
 # Python bytecode and caches
+/torch_compile_debug/
 __pycache__/
 *.py[cod]
 *$py.class
