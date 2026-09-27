@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "experiment_name": "PDS9952 Parent-Diverse Low-Budget Adaptation",
+  "classification": "ADAPTATION",
+  "stage_scope": "local_PDS_stage_after_PE_OPD",
+  "comparator_semantics": "fresh_Qwen3_8B_fixed_target_vs_online_Qwen3_8B_distribution",
+  "paper_exact_pds_target_supervision": false,
+  "low_budget_one_context_per_parent": true,
+  "strict_loss_only_isolation": false,
+  "compute_matched": false,
+  "primary_claim": "B_vs_C_conditional_on_frozen_PDS9952",
+  "pds_source_causal_claim": false,
+  "single_seed_scope": "descriptive_only",
+  "replication_required_for_paper_level_superiority": true,
+  "upstream_pds": {
+    "path": "/workspace/mtpatcher/data/mtpatcher_v3_full6565_20260823/strong_repro_pds_full_to_student_v2/pds_structural_accepted_v2.jsonl",
+    "sha256": "078559128776c2dd2dd5d7ed2c9a8f22794457bf53382e3b4c4578404287f6f8",
+    "expected_rows": 57125,
+    "expected_eligible_parents": 9957
+  },
+  "selection": {
+    "row_salt": "MTP_PDS9952_ROW_V1",
+    "parent_salt": "MTP_PDS9952_PARENT_V1",
+    "serialization": {
+      "format": "json.dumps",
+      "ensure_ascii": false,
+      "sort_keys": true,
+      "separators": [",", ":"],
+      "encoding": "utf-8",
+      "unicode_normalization": "none",
+      "whitespace_normalization": "none",
+      "source_strip_before_hash": false
+    },
+    "row_selection": "minimum selection_row_sha256 within parent; upstream_line_no ascending only as SHA tie-break",
+    "parent_selection": "sort by (parent_rank_sha256,parent_index), retain first 9952",
+    "retained_parents": 9952,
+    "excluded_parents": 5
+  },
+  "budget": {
+    "population": 9952,
+    "passes": 6,
+    "global_source_batch": 16,
+    "source_exposures": 59712,
+    "optimizer_steps": 3732,
+    "schedule_seed": 20260820
+  },
+  "stage_entry": {
+    "source_actor_checkpoint": "/workspace/mtpatcher/runs/science/pe_pds_v1/pe_opd_formal_v1/checkpoints/global_step_4422/actor",
+    "merged_hf_path": "/workspace/mtpatcher/runs/science/pe_pds_v1/pds9952_stage_entry_v1/pe_opd_step4422_merged_hf",
+    "inherit_optimizer_state": false,
+    "resume_mode": "disable"
+  },
+  "teacher": {
+    "model": "/workspace/mtpatcher/models/Qwen3-8B",
+    "generator": "scripts/mtpatcher_rq0/generate_seqkd50k_teacher_v1.py",
+    "enable_thinking": false,
+    "do_sample": false,
+    "max_new_tokens": 512,
+    "prompt": "Translate the following text into English without additional explanations:\n\n{source}\n\n"
+  },
+  "seqkd": {
+    "objective": "response_only_CE_on_frozen_teacher_sequence",
+    "optimizer": "AdamW",
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "clip_grad": 1.0,
+    "lr_scheduler_type": "cosine",
+    "lr_warmup_steps_ratio": 0.03,
+    "training_seed": 20260820
+  },
+  "opd": {
+    "objective": "forward_kl_topk",
+    "teacher_topk": 32,
+    "actor_lr": 1e-06,
+    "ppo_epochs": 1,
+    "loss_agg_mode": "token-mean",
+    "rollout_n": 1,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "top_k": -1,
+    "use_task_rewards": false,
+    "use_policy_gradient": false,
+    "actor_use_kl_loss": false,
+    "use_kl_in_reward": false
+  },
+  "primary_endpoint_step": 3732,
+  "validation_steps": [
+    0, 100, 200, 300, 400, 500, 600, 700, 800, 900,
+    1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900,
+    2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900,
+    3000, 3100, 3200, 3300, 3400, 3500, 3600, 3700, 3732
+  ],
+  "validation_contract": {
+    "asset": "existing frozen validation3231",
+    "same_for_both_arms": true,
+    "intermediate_checkpoints_are_diagnostic_only": true,
+    "retrospective_best_checkpoint_forbidden": true
+  },
+  "generated_runtime_fields": {
+    "population_sha256": null,
+    "teacher_input_sha256": null,
+    "teacher_target_sha256": null,
+    "source_order_sha256": null,
+    "seqkd_parquet_sha256": null,
+    "opd_parquet_sha256": null,
+    "merged_stage_entry_model_hashes": null
+  },
+  "forbidden_mechanisms": [
+    "historical_PDS_Yprime_as_third_primary_arm",
+    "patch_local_KL_weighting",
+    "error_span_weighted_loss",
+    "privileged_teacher_context",
+    "teacher_intervention",
+    "dynamic_gap_threshold",
+    "dynamic_patch_retirement",
+    "online_feedbacker_regeneration",
+    "WA",
+    "xCOMET_verifier",
+    "multi_agent_control",
+    "LR_sweep",
+    "PDS_ratio_sweep",
+    "best_checkpoint_selection",
+    "new_Verl_loss_implementation"
+  ]
+}
