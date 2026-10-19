@@ -1,0 +1,10 @@
+- name: mtpatcher_fixed_response_v1
+  _target_: mtpatcher_mixed_gkd.fixed_response_agent_v1.FixedResponseAgentLoopV1
+
+  fixed_response_bank_path: /workspace/mtpatcher/data/verl_science_pe_pds/mixed_gkd_v1_probe/fixed_response_bank_v1.jsonl
+
+  fixed_response_bank_file_sha256: c995f56b2533bef831c4b88953910c06c0421acdb59250667aed86881e4f8711
+
+  fixed_response_bank_semantic_sha256: 2fc2c8066e46a7a69775de51e17d21f47b3abb84c8ba919610ca5135e1f421de
+
+  fixed_response_bank_rows: 2048

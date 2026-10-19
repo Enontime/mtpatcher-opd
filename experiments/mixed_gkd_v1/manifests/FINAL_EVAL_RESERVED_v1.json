@@ -1,0 +1,73 @@
+{
+  "schema": "mixed_gkd_v1_final_eval_reservation_v1",
+  "status": "FINAL_EVAL_RESERVED_v1",
+  "purpose": "Primary post-hoc final evaluation contract for the Mixed-GKD v1 four-cell probe.",
+  "evaluation_policy": {
+    "cells": [
+      "GKD-A",
+      "GKD-B",
+      "GKD-C",
+      "GKD-D"
+    ],
+    "endpoint_step": 768,
+    "evaluate_only_after_all_four_cells_complete": true,
+    "checkpoint_selection_from_final_eval": false,
+    "adaptive_stop_or_cell_selection_from_final_eval": false,
+    "same_evaluator_for_all_cells": true
+  },
+  "primary_validation": {
+    "contract": "matched20k_v2_common_validation_v1",
+    "jsonl": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/validation3231.jsonl",
+    "parquet": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/validation3231.parquet"
+  },
+  "frozen_inputs": [
+    {
+      "role": "reference_endpoint_validation_recipe",
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/recipes/pe_pds/run_pds9952_endpoint_validation_v4.sh",
+      "sha256": "da243760d9b8173eee98e25f6fa06c91f9a2e79f121e5f69cf23ee2439963733"
+    },
+    {
+      "role": "common_validation_config",
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/configs/eval/matched20k_v2_common_validation_v1.yaml",
+      "sha256": "2bf25a13ffaeff94a69cefd7a477f586aa1b563163591077dd758d5058125481"
+    },
+    {
+      "role": "evaluator_run_opd",
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/matched20k_v2/run_opd.py",
+      "sha256": "83df82e04bd7e45bb67644df4a38dc0bbdb50a69a19e9e8d34254d413ec1c866"
+    },
+    {
+      "role": "evaluator_trainer",
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/matched20k_v2/opd_trainer.py",
+      "sha256": "1e0c7a81671fe5bf0828a7955dbae57d0e1650a7d85e1cf9da5a63ba722e82f7"
+    },
+    {
+      "role": "shared_mt_validation",
+      "path": "/workspace/mtpatcher/repo/MT-Patcher-Reproduction-Ascend/scripts/matched20k_v2/shared_mt_validation.py",
+      "sha256": "b89a3a738137dffedb088ee4222ea5660884bb2036a0e08028c79dd683ff310a"
+    },
+    {
+      "role": "validation3231_jsonl",
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/validation3231.jsonl",
+      "sha256": "240374dc5c1423d57fb1e733d6acd403905fa75ba27e9c18fd0080dcd81de1dd"
+    },
+    {
+      "role": "validation3231_parquet",
+      "path": "/workspace/mtpatcher/data/verl_science_broad20k/matched20k_v2/validation3231.parquet",
+      "sha256": "86d5adb584d683b768788da7f9b3767b77be38590226aa65b0ce695cf8483ed2"
+    }
+  ],
+  "interpretation": {
+    "primary_question": "trajectory source x divergence factorial comparison",
+    "contrasts": {
+      "A_vs_C": "trajectory effect under projected FKL",
+      "B_vs_D": "trajectory effect under projected JSD(0.1)",
+      "A_vs_B": "divergence effect at lambda=1.0",
+      "C_vs_D": "divergence effect at lambda=0.5"
+    }
+  },
+  "secondary_external_benchmarks": {
+    "status": "NOT_PART_OF_PRIMARY_RESERVATION",
+    "note": "WMT24/FLORES/Challenge may be frozen later as secondary external evaluation after all four formal cells are complete."
+  }
+}

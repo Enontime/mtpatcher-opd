@@ -1,0 +1,34 @@
+{
+  "schema": "mixed_gkd_v1_formal_probe_authorization_v1",
+  "status": "FORMAL_AUTHORIZED",
+  "authorization_source": "explicit_human_authorization",
+  "authorized_at_utc": "2026-09-28T16:39:06Z",
+  "authorized_cells": [
+    "GKD-A",
+    "GKD-C"
+  ],
+  "chain_order": [
+    "GKD-A",
+    "GKD-C"
+  ],
+  "unauthorized_cells": [
+    "GKD-B",
+    "GKD-D"
+  ],
+  "scope": {
+    "optimizer_steps_per_cell": 768,
+    "execution": "training_only",
+    "evaluate_during_or_after_ac": false,
+    "final_eval_after_all_four_cells": true
+  },
+  "prepared_project_head": "667db120e94166bab451e893aded2394bfdc2214",
+  "candidate_verl_head": "ee2060725c3d5deff0d77ab4ffab4f30cd283dab",
+  "candidate_verl_production_patch_sha256": "aeb31078322f2206bba053109a8502baa3495457d487b87b0d1a3cc37fa61a8a",
+  "final_eval_manifest_sha256": "c531a4cb75daecae52bac73a7d55f4461bd472a47b0bc29f19a781cc85cde54a",
+  "fail_closed": {
+    "A_failure_blocks_C": true,
+    "post_A_cleanup_required": true,
+    "existing_run_blocks_launch": true,
+    "active_payload_blocks_launch": true
+  }
+}
