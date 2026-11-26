@@ -1,0 +1,82 @@
+{
+    "status":  "CONSTRUCTED",
+    "raw_received":  17056,
+    "parse_stats":  {
+                        "pds_parsed":  8528,
+                        "pds_source_hit":  8524,
+                        "pds_target_hit":  8522,
+                        "wa_pds_parsed":  8504,
+                        "wa_pds_source_hit":  8504,
+                        "wa_pds_target_hit":  8496,
+                        "wa_pds_unparsed":  24
+                    },
+    "unparsed":  24,
+    "heldout_unique_sources":  2000,
+    "datasets":  {
+                     "PE":  {
+                                "n":  1244,
+                                "counts":  {
+                                               "PE":  1244
+                                           },
+                                "sha256":  "50a595ee07e80f88070c567ed164b194f3fb50179276642b7f8f735aaddb1598"
+                            },
+                     "PE_PDS_first":  {
+                                          "n":  6211,
+                                          "counts":  {
+                                                         "PE":  1244,
+                                                         "PDS":  4967,
+                                                         "PDS_duplicate_source":  9
+                                                     },
+                                          "sha256":  "4417c140d97f148080014ecc5f5a06ebbaee02cdfd42db7e62a913fbc875e810"
+                                      },
+                     "PE_PDS_WA_first":  {
+                                             "n":  11171,
+                                             "counts":  {
+                                                            "PE":  1244,
+                                                            "PDS":  4967,
+                                                            "PDS_duplicate_source":  9,
+                                                            "WA":  4960
+                                                        },
+                                             "sha256":  "7204d512c4671db6768b3974cab4ccc82dd26dc915888074914f30c3a33a3300"
+                                         },
+                     "PE_PDS_related":  {
+                                            "n":  6564,
+                                            "counts":  {
+                                                           "PE":  1244,
+                                                           "PDS":  5320,
+                                                           "PDS_duplicate_source":  8
+                                                       },
+                                            "sha256":  "82d01ca7c2d844ee43cedfcea3f444da39804f7f0b5a229880fd71ed031ccfa6"
+                                        },
+                     "PE_PDS_WA_related":  {
+                                               "n":  11876,
+                                               "counts":  {
+                                                              "PE":  1244,
+                                                              "PDS":  5320,
+                                                              "PDS_duplicate_source":  8,
+                                                              "WA":  5312
+                                                          },
+                                               "sha256":  "3029c89501bb8ec06616066c78de17a542ef4c563926f751451534ff7c63217a"
+                                           },
+                     "PE_PDS_all":  {
+                                        "n":  9762,
+                                        "counts":  {
+                                                       "PE":  1244,
+                                                       "PDS":  8518,
+                                                       "PDS_duplicate_source":  10
+                                                   },
+                                        "sha256":  "32eac8595b1ba53491ed6235017eccbeab3f93d690cdb65a8de08d2fbabe5366"
+                                    },
+                     "PE_PDS_WA_all":  {
+                                           "n":  18266,
+                                           "counts":  {
+                                                          "PE":  1244,
+                                                          "PDS":  8518,
+                                                          "PDS_duplicate_source":  10,
+                                                          "WA":  8504
+                                                      },
+                                           "sha256":  "2f107d55cdcfa621be4163f8a7d96e3db0dfd39f04198570e3a0a803579448a2"
+                                       }
+                 },
+    "policy":  "Keep raw, parse only explicit two-line bilingual answers, PE priority exact normalized source dedup, no gold or term-hit filtering. No semantic or near-duplicate audit."
+}
